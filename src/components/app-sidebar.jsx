@@ -40,11 +40,11 @@ const data = {
         {
           
           title: "Activated Members",
-          url: "#",
+          url: "/dashboard/activated-members",
         },
         {
           title: "Inactive Accounts",
-          url: "#",
+          url: "/dashboard/inactive-accounts",
         },
       ],
     },
@@ -63,16 +63,27 @@ const data = {
       icon: Send,
     },
   ],
+
   projects: [
     {
       name: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
+      name: "MotherWallet",
+      url: "/dashboard/motherwallet",
       icon: PieChart,
+    },
+    {
+      name: "Merchants",
+      url: "/dashboard/merchants",
+      icon: Map,
+    },
+    {
+      name: "Community",
+      url: "/dashboard/community",
+      icon: Map,
     },
     {
       name: "Travel",
@@ -111,6 +122,7 @@ export function AppSidebar({
         <NavProjects projects={data.projects} />
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
+        
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

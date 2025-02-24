@@ -15,6 +15,7 @@ export function LoginForm({ className, ...props }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+
   const handleLogin = async (event) => {
     event.preventDefault();
     setError(""); // Clear previous errors
@@ -25,7 +26,7 @@ export function LoginForm({ className, ...props }) {
     }
   
     try {
-      const response = await fetch(`http://192.168.1.5:9000/v1/admin/${account_url}/login`, {
+      const response = await fetch(`http://192.168.1.11:8000/v1/admin/${account_url}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -57,7 +58,7 @@ export function LoginForm({ className, ...props }) {
       if (userData.account_type === "CUSTOMER_SUPPORT") {
         navigate("/customer-support");
       } else if (userData.account_type === "ADMIN") {
-        navigate("/admin-dashboard");
+        navigate("/dashboard");
       } else {
         throw new Error("Invalid account type.");
       }
