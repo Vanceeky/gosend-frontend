@@ -1,21 +1,33 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
-  export function RecentSales() {
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ShieldCheckIcon } from "lucide-react";
+  export function ReferredUsers() {
     return (
       <div className="space-y-8">
         <div className="flex items-center">
-          <Avatar className="h-9 w-9">
+        <Avatar className="h-9 w-9">
             <AvatarImage src="/avatars/01.png" alt="Avatar" />
             <AvatarFallback>OM</AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
+        </Avatar>
+        <div className="ml-4 space-y-1">
+            <div className="flex items-center gap-1">
             <p className="text-sm font-medium leading-none">Olivia Martin</p>
+            <TooltipProvider>
+                <Tooltip>
+                <TooltipTrigger asChild>
+                    <ShieldCheckIcon className="text-green-500 cursor-pointer h-4 w-4" />
+                </TooltipTrigger>
+                <TooltipContent>Member is activated</TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            </div>
             <p className="text-sm text-muted-foreground">
-              olivia.martin@email.com
+            Date Joined: 2023-08-01
             </p>
-          </div>
-          <div className="ml-auto font-medium">+₱175.00</div>
         </div>
+        <div className="ml-auto font-medium">+₱175.00</div>
+        </div>
+
         <div className="flex items-center">
           <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
             <AvatarImage src="/avatars/02.png" alt="Avatar" />

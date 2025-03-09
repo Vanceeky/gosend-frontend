@@ -1,13 +1,14 @@
 import * as React from "react"
 import {
   Command,
-  Frame,
   LifeBuoy,
   Map,
-  PieChart,
   Send,
-  SquareTerminal,
+  LayoutDashboard,
   Users,
+  Wallet,
+  StoreIcon,
+  Users2,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -24,6 +25,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import logo from '@/assets/gosend_logo.png';
+
 const data = {
   user: {
     name: "shadcn",
@@ -33,7 +35,7 @@ const data = {
   navMain: [
     {
       title: "Members",
-      url: "#",
+      url: "/dashboard/members",
       icon: Users,
       isActive: true,
       items: [
@@ -68,22 +70,22 @@ const data = {
     {
       name: "Dashboard",
       url: "/dashboard",
-      icon: Frame,
+      icon: LayoutDashboard,
     },
     {
       name: "MotherWallet",
       url: "/dashboard/motherwallet",
-      icon: PieChart,
+      icon: Wallet,
     },
     {
       name: "Merchants",
       url: "/dashboard/merchants",
-      icon: Map,
+      icon: StoreIcon,
     },
     {
       name: "Community",
       url: "/dashboard/community",
-      icon: Map,
+      icon: Users2,
     },
     {
       name: "Travel",
@@ -92,6 +94,8 @@ const data = {
     },
   ],
 }
+
+
 
 export function AppSidebar({
   ...props

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+import { toast } from "sonner";
 
 export function LoginForm({ className, ...props }) {
   
@@ -21,12 +22,13 @@ export function LoginForm({ className, ...props }) {
     setError(""); // Clear previous errors
   
     if (!account_url) {
-      setError("Invalid account URL.");
+      toast.error("Invalid account URL.");
       return;
     }
   
     try {
-      const response = await fetch(`http://192.168.1.11:8000/v1/admin/${account_url}/login`, {
+      const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
+      const response = await fetch(`http://${API_BASE_URL}:8000/v1/admin/${account_url}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -51,6 +53,8 @@ export function LoginForm({ className, ...props }) {
       localStorage.setItem("token", userData.access_token);
       localStorage.setItem("account_type", userData.account_type);
   
+      toast.success("Login successful!");
+  
       console.log(userData.account_type);
       console.log(userData.access_token);
   
@@ -62,11 +66,11 @@ export function LoginForm({ className, ...props }) {
       } else {
         throw new Error("Invalid account type.");
       }
-  
     } catch (error) {
-      setError(error.message);
+      toast.error(error.message);
     }
   };
+  
   
 
   return (
@@ -99,6 +103,7 @@ export function LoginForm({ className, ...props }) {
           </div>
           <Input
             id="password"
+            placeholder="************"
             type="password"
             required
             value={password}

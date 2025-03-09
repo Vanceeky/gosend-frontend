@@ -6,6 +6,8 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import LocationForm from "./Location.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Check, AlertTriangle } from "lucide-react";
 
 export function MerchantRegisterForm({ setAlert, className, ...props }) {
   const navigate = useNavigate();
@@ -160,40 +162,59 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
     };
   
     console.log('Payload:', payload);
-  
+
     try {
-      // Include referrer_id in the URL path and referral_id as a query parameter
-      const url = `http://192.168.1.7:8000/v1/merchants/create/${referrer_id}?referral_id=${referrer_id}`;
-  
+      const url = `http://192.168.1.9:8000/v1/merchants/create/${referrer_id}?referral_id=${referrer_id}`;
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
   
       if (!response.ok) {
         const errorResponse = await response.json();
-        console.error('Error response:', errorResponse);
-        setAlert({ type: "error", message: errorResponse.message || "Failed to create merchant." });
-        throw new Error('Network response was not ok');
+        console.error("Error response:", errorResponse);
+  
+        toast.error(errorResponse.message || "Something went wrong. Please try again.", {
+          icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
+        });
+  
+        throw new Error("Network response was not ok");
       }
-
+  
       const result = await response.json();
-      console.log('Merchant created successfully:', result);
-
-      // Show success alert
-      setAlert({ type: "success", message: "Merchant created successfully! Redirecting to login..." });
-
-      // Redirect to login page after 2 seconds
-      setTimeout(() => {
-        navigate('/login'); // Redirect to the login page
-      }, 3000); // 2-second delay
+      console.log("Merchant created successfully:", result);
+  
+      // ✅ Show success toast & keep user on page
+      toast.success("Merchant Created Successfully!", {
+        icon: <Check className="w-5 h-5 text-green-500" />,
+      });
+  
+      // Optional: Reset form after success
+      setFormData({
+        mobileNumber: "",
+        businessName: "",
+        businessType: "",
+        businessEmail: "",
+        street: "",
+      });
+      setSelectedRegion(null);
+      setSelectedProvince(null);
+      setSelectedCity(null);
+      setSelectedBarangay(null);
+  
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-      setAlert({ type: "error", message: error.message || "An error occurred. Please try again." });
+      console.error("There was a problem with the fetch operation:", error);
+  
+      toast.error(error.message || "An error occurred. Please try again.", {
+        icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
+      });
     }
+  
+
+
   };
 
 

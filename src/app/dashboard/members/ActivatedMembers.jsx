@@ -54,7 +54,8 @@ const ActivatedMembers = () => {
   const [filterValue, setFilterValue] = React.useState("");
 
   React.useEffect(() => {
-    fetch("http://192.168.1.11:8000/v1/users/activation_status/?is_activated=true")
+    const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
+    fetch(`http://${API_BASE_URL}:8000/v1/users/activation_status/?is_activated=true`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
