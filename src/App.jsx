@@ -7,7 +7,7 @@ import MerchantRegister from './app/merchant/MerchantRegistration.jsx';
 import HomeRoutes from "@/routes/HomeRoutes";
 import DashboardRoutes from "@/routes/DashboardRoutes"; // 👈 Import Dashboard Routes
 import CommunityRoutes from "@/routes/CommunityRoutes";
-
+import MerchantRoutes from "@/routes/MerchantRoutes.jsx"
 
 import ErrorPage from "./components/ErrorPage";
 
@@ -43,7 +43,7 @@ function App() {
           {/* Community Routes (Private) */}
           <Route path="/community/*" element={<CommunityRoutes />} />
 
-
+          <Route path="/merchant/*" element={<MerchantRoutes/>} />
 
           <Route path="*" element={<ErrorPage />} />
 

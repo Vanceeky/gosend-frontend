@@ -55,13 +55,23 @@ const data = {
 
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
+      title: "Dashboard",
+      url: "/merchant",
       icon: LifeBuoy,
     },
     {
-      title: "Feedback",
-      url: "#",
+      title: "Transactions",
+      url: "/merchant/transactions",
+      icon: Send,
+    },
+    {
+      title: "Rewards",
+      url: "/merchant/rewards",
+      icon: Send,
+    },
+    {
+      title: "Profile",
+      url: "/merchant/manage-profile",
       icon: Send,
     },
   ],
