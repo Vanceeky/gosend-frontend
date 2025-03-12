@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card"; // ShadCN's Card components
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"; // ShadCN Carousel components
@@ -243,3 +244,4 @@ const Features = () => {
 };
 
 export default Features;
+

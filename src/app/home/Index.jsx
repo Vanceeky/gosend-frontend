@@ -26,7 +26,9 @@ const Index = () => {
         <HowItWorksSection/>
         <TestimonialsSection/>
         <CTASection/>
+
         
+
 
 
     </div>

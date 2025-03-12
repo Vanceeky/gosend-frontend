@@ -10,24 +10,26 @@ export function Navbar() {
   const closeMobileMenu = () => setIsOpen(false);
 
   return (
-    <nav className="bg-background border-b">
-      <div className="container mx-auto px-4">
+    <nav className="bg-white border-b shadow-sm">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <img src={logo} alt="GoSendIt Logo" className="h-8 w-8" />
-            <span className="text-lg font-semibold text-orange-600">GoSend</span>
+            <img src={logo} alt="GoSend Logo" className="h-10 w-auto" />
+            <span className="text-xl font-bold text-orange-600">GoSend</span>
           </Link>
 
-          {/* Centered Desktop Links */}
-          <div className="hidden md:flex flex-1 justify-center space-x-6">
-            <Link to="/about-us" className="text-sm font-medium hover:text-primary">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex flex-1 justify-center space-x-8">
+            <Link to="/about-us" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition">
               About
             </Link>
-            <Link to="/features" className="text-sm font-medium hover:text-primary">
+
+            <Link to="/features" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition">
+
               Features
             </Link>
-            <Link to="/contact-us" className="text-sm font-medium hover:text-primary">
+            <Link to="/contact-us" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition">
               Contact
             </Link>
           </div>
@@ -37,8 +39,8 @@ export function Navbar() {
             <Button variant="outline" asChild>
               <Link to="/login">Login</Link>
             </Button>
-            <Button asChild className="bg-orange-500">
-              <Link to="/signup">Become a Member</Link>
+            <Button asChild className="bg-orange-500 hover:bg-orange-600 transition">
+              <Link to="/signup">Become a Member!</Link>
             </Button>
           </div>
 
@@ -58,21 +60,23 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-40" onClick={closeMobileMenu}>
-          <div className="bg-background w-full max-w-xs p-6 rounded-lg shadow-lg flex flex-col items-center space-y-4 z-50">
-            <Link to="/about" className="text-sm font-medium hover:text-primary" onClick={closeMobileMenu}>
+        <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/50 z-50">
+          <div className="bg-white w-11/12 max-w-xs p-6 rounded-lg shadow-lg flex flex-col items-center space-y-4">
+            <Link to="/about-us" className="text-lg font-medium text-gray-700 hover:text-orange-500 transition" onClick={closeMobileMenu}>
               About
             </Link>
-            <Link to="/features" className="text-sm font-medium hover:text-primary" onClick={closeMobileMenu}>
-              Features
+
+            <Link to="/services" className="text-lg font-medium text-gray-700 hover:text-orange-500 transition" onClick={closeMobileMenu}>
+              Services
+
             </Link>
-            <Link to="/contact" className="text-sm font-medium hover:text-primary" onClick={closeMobileMenu}>
+            <Link to="/contact-us" className="text-lg font-medium text-gray-700 hover:text-orange-500 transition" onClick={closeMobileMenu}>
               Contact
             </Link>
             <Button variant="outline" asChild className="w-full">
               <Link to="/login" onClick={closeMobileMenu}>Login</Link>
             </Button>
-            <Button asChild className="w-full">
+            <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 transition">
               <Link to="/signup" onClick={closeMobileMenu}>Sign Up</Link>
             </Button>
           </div>

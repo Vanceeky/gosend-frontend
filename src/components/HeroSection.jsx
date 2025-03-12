@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import bg from '@/assets/image/image2.1.png';
+import bg1 from '@/assets/image/applelogo.png';
+import bg2 from '@/assets/image/google.png';
 
 export function HeroSection() {
   // Animation variants
@@ -16,7 +19,7 @@ export function HeroSection() {
 
   return (
     <section className="bg-gradient-to-r from-blue-50 to-purple-50 py-20">
-      <div className="container mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
           {/* Left Side: Text Content */}
           <div className="text-center md:text-left md:w-1/2">
@@ -38,7 +41,7 @@ export function HeroSection() {
               animate="visible"
               transition={{ delay: 0.2 }}
             >
-              Join <span className="font-semibold text-orange-600"> GoSend </span> and experience seamless digital transactions with built-in affiliate marketing. Activate your account, enjoy exclusive features, and earn rewards. 
+              Join <span className="font-semibold text-orange-600"> GoSend </span> and experience seamless digital transactions with built-in affiliate marketing. Activate your account, enjoy exclusive features, and earn rewards.
             </motion.p>
 
             {/* Animated Buttons */}
@@ -48,21 +51,38 @@ export function HeroSection() {
               initial="hidden"
               animate="visible"
             >
-              <Button asChild>
-                <Link to="/signup">Get Started</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/about">Learn More</Link>
-              </Button>
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-3 sm:space-y-0 sm:space-x-5 p-4 sm:p-0">
+                <Button asChild className="flex items-center px-5 py-3 text-white bg-black rounded-lg hover:bg-gray-800 transition">
+                  <Link to="#" className="flex items-center">
+                    <img
+                      src={bg1} // Replace with your actual image URL
+                      alt="Google Play-Store"
+                      className="w-6 h-6 mr-3" // Adjust width as needed
+                    />
+                    <span className="text-base font-medium">Get it on Google Play</span>
+                  </Link>
+                </Button>
+
+                <Button asChild className="flex items-center px-5 py-3 text-white bg-black rounded-lg hover:bg-gray-800 transition">
+                  <Link to="#" className="flex items-center">
+                  <img
+                      src={bg2} // Replace with your actual image URL
+                      alt="Download Options"
+                      className="w-6 h-6 mr-3" // Adjust width as needed
+                    />
+                    <span className="text-base font-medium">Get it on App Store</span>
+                  </Link>
+                </Button>
+              </div>
+
             </motion.div>
           </div>
 
           {/* Right Side: Image */}
           <div className="md:w-1/2">
             <img
-              src="https://placehold.co/600x400" // Replace with your image URL
+              src={bg} // Replace with your image URL
               alt="Hero Image"
-              className="rounded-lg shadow-lg"
             />
           </div>
         </div>
