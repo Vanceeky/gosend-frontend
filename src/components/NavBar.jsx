@@ -24,8 +24,8 @@ export function Navbar() {
             <Link to="/about-us" className="text-sm font-medium hover:text-primary">
               About
             </Link>
-            <Link to="/services" className="text-sm font-medium hover:text-primary">
-              Services
+            <Link to="/features" className="text-sm font-medium hover:text-primary">
+              Features
             </Link>
             <Link to="/contact-us" className="text-sm font-medium hover:text-primary">
               Contact
@@ -63,8 +63,8 @@ export function Navbar() {
             <Link to="/about" className="text-sm font-medium hover:text-primary" onClick={closeMobileMenu}>
               About
             </Link>
-            <Link to="/services" className="text-sm font-medium hover:text-primary" onClick={closeMobileMenu}>
-              Services
+            <Link to="/features" className="text-sm font-medium hover:text-primary" onClick={closeMobileMenu}>
+              Features
             </Link>
             <Link to="/contact" className="text-sm font-medium hover:text-primary" onClick={closeMobileMenu}>
               Contact
