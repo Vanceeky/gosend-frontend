@@ -3,8 +3,8 @@ import HomePage from "@/app/home/page";
 import Index from "@/app/home/Index";
 import AboutUs from "@/app/home/AboutUs";
 import ContactUs from "@/app/home/ContactUs";
-
 import ErrorPage from "@/components/ErrorPage";
+import Features from "@/app/home/Features";
 
 function HomeRoutes() {
     return (
@@ -14,6 +14,11 @@ function HomeRoutes() {
                 <Route index element={<Index />} />
                 <Route path="about-us" element={<AboutUs />} />
                 <Route path="contact-us" element={<ContactUs />} />
+                <Route path="features" element={<Features />} />
+
+                
+
+                
             </Route>
         </Routes>
     );
