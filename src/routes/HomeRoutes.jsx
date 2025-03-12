@@ -4,7 +4,6 @@ import Index from "@/app/home/Index";
 import AboutUs from "@/app/home/AboutUs";
 import ContactUs from "@/app/home/ContactUs";
 
-import Features from "@/app/home/Features";
 
 
 import ErrorPage from "@/components/ErrorPage";
