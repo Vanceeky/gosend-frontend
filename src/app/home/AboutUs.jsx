@@ -32,7 +32,7 @@ const AboutUs = () => {
               <h2 className="text-2xl md:text-3xl font-semibold text-orange-400">GoSend Services</h2>
               <p className="text-gray-300 mt-2 leading-relaxed">
                 Pay bills, buy load, add e-money, and more—all in one place! Easily access these services through the{" "}
-                <span className="font-semibold text-orange-300">GoSend</span> app anytime, anywhere.
+                <span className="font-semibold text-orange-300">GoSensad</span> app anytime, anywhere.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button asChild className="flex items-center px-4 py-2 text-white bg-black rounded-lg hover:bg-gray-800 transition">
