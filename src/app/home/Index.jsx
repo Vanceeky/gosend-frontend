@@ -5,6 +5,7 @@ import { HowItWorksSection } from '@/components/HowItWorksSection'
 import { TestimonialsSection } from '@/components/TestimonialsSections'
 import { CTASection } from '@/components/CTASection'
 
+
 const Index = () => {
   return (
     <div>

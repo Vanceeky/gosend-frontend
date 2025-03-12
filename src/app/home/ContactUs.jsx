@@ -1,6 +1,8 @@
 import React, { useState } from 'react'; 
+
 import { Phone, Mail, MapPin, Facebook, ChevronDown } from 'lucide-react'; 
 import * as Collapsible from '@radix-ui/react-collapsible'; 
+
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +11,9 @@ const ContactUs = () => {
     subject: '',
     message: ''
   });
+
   const [messageStatus, setMessageStatus] = useState(null);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +26,7 @@ const ContactUs = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
+
 
     // Simulate a successful form submission
     setMessageStatus('success');
@@ -229,3 +234,4 @@ const ContactUs = () => {
 };
 
 export default ContactUs;
+
