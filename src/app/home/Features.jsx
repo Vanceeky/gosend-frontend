@@ -158,7 +158,7 @@ export function FeaturesSection() {
             </div>
             <h3 className="text-xl font-semibold mb-2">Loyalty & Rewards Programs</h3>
             <p className="text-gray-600">
-                hi Earn rewards and exclusive benefits with every transaction. Your loyalty is valued, and we’ve got exciting rewards for you.
+                 hi Earn rewards and exclusive benefits with every transaction. Your loyalty is valued, and we’ve got exciting rewards for you.
             </p>
             </div>
   
