@@ -11,9 +11,10 @@ import MerchantRoutes from "@/routes/MerchantRoutes.jsx"
 
 import ErrorPage from "./components/ErrorPage";
 
-
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 import { Toaster  } from "sonner";
+
 
 function App() {
   return (
@@ -36,15 +37,18 @@ function App() {
           <Route path="/login" element={<MemberLoginPage />} />
 
 
-          {/* Dashboard Routes (Private) */}
-          <Route path="/dashboard/*" element={<DashboardRoutes />} />
+                {/* Protected Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+                    <Route path="/dashboard/*" element={<DashboardRoutes />} />
+                </Route>
 
+                <Route element={<ProtectedRoute allowedRoles={["LEADER", "ADMIN"]} />}>
+                    <Route path="/community/*" element={<CommunityRoutes />} />
+                </Route>
 
-          {/* Community Routes (Private) */}
-          <Route path="/community/*" element={<CommunityRoutes />} />
-
-          <Route path="/merchant/*" element={<MerchantRoutes/>} />
-
+                <Route element={<ProtectedRoute allowedRoles={["MERCHANT", "ADMIN"]} />}>
+                    <Route path="/merchant/*" element={<MerchantRoutes />} />
+                </Route>
           <Route path="*" element={<ErrorPage />} />
 
         </Routes>
