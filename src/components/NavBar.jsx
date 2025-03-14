@@ -24,7 +24,9 @@ export function Navbar() {
             <Link to="/about-us" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition">
               About
             </Link>
+
             <Link to="/features" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition">
+
               Features
             </Link>
             <Link to="/contact-us" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition">
@@ -63,8 +65,10 @@ export function Navbar() {
             <Link to="/about-us" className="text-lg font-medium text-gray-700 hover:text-orange-500 transition" onClick={closeMobileMenu}>
               About
             </Link>
+
             <Link to="/services" className="text-lg font-medium text-gray-700 hover:text-orange-500 transition" onClick={closeMobileMenu}>
               Services
+
             </Link>
             <Link to="/contact-us" className="text-lg font-medium text-gray-700 hover:text-orange-500 transition" onClick={closeMobileMenu}>
               Contact

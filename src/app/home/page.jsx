@@ -1,8 +1,8 @@
 import React from 'react'
 import { Outlet } from "react-router-dom";
 import { Navbar } from '@/components/NavBar';
+import { Footer } from '@/components/Footer'
 
-import { Footer } from '@/components/Footer';
 
 
 const HomePage = () => {
@@ -18,7 +18,7 @@ const HomePage = () => {
         <Outlet />
         <Footer/>
       </div>
-        <Footer />
+
     </div>
   );
 };
