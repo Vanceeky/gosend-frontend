@@ -35,8 +35,16 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
 
+  const handleLogout = () => {
+    // Remove access token and cookies
+    localStorage.removeItem("accessToken");
+    console.log("Logging out...");
+    // Redirect to login page after logout
+    window.location.href = "/login";
+  };
+
   return (
-    (<SidebarMenu>
+    <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -75,32 +83,17 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles />
-                Upgrade to Pro
+                View Profile
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
-    </SidebarMenu>)
+    </SidebarMenu>
   );
 }

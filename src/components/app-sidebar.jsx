@@ -28,8 +28,8 @@ import logo from '@/assets/gosend_logo.png';
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Ivan Sari Sari Store",
+    email: "9456656707",
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
@@ -141,6 +141,7 @@ export function AppSidebar({
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
+
     </Sidebar>)
   );
 }
