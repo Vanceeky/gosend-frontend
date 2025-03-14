@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -83,9 +85,9 @@ const Rewards = () => {
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dateRange.from && dateRange.to ? (
                     <span className="text-[11px] truncate">
-                      {format(new Date(dateRange.from), "PPP")} - {format(new Date(dateRange.to), "PPP")}
-                    </span>
-
+                    {format(new Date(dateRange.from), "PPP")} - {format(new Date(dateRange.to), "PPP")}
+                  </span>
+                  
                   ) : (
                     "Pick a date range"
                   )}
