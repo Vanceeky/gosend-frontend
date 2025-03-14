@@ -9,6 +9,8 @@ import { Circle } from "lucide-react"; // For the circular progress indicator
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 
+import { toast } from "sonner";
+
 export function LoginForm({ className, ...props }) {
   const [step, setStep] = useState("mobile"); // "mobile", "otp", "mpin"
   const [mobile, setMobile] = useState("");
@@ -18,54 +20,346 @@ export function LoginForm({ className, ...props }) {
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes in seconds
   const [isResendDisabled, setIsResendDisabled] = useState(true); // Disable resend button initially
   const [accountType, setAccountType] = useState("");
+  const [otpToken, setOtpToken] = useState(""); // Store OTP token from API
+  const [isLoading, setIsLoading] = useState(false); // Loading state for API calls
+  const [error, setError] = useState(""); // Error message
 
-  const handleMobileSubmit = (e) => {
+
+
+const handleMobileSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (mobile.length !== 10 || !accountType) {
+    toast({
+      title: "Error",
+      description: "Please enter a valid 10-digit mobile number and select an account type.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const url = new URL("http://192.168.100.97:8000/v1/auth/login");
+    url.searchParams.append("mobile_number", mobile);
+    url.searchParams.append("role", accountType.toUpperCase());
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to send OTP");
+    }
+
+    const data = await response.json();
+    const { otp_token, otp } = data;
+
+    setOtpToken(otp_token);
+    setExpiredAt(new Date(Date.now() + 120 * 1000));
+    setTimeLeft(120);
+    setIsResendDisabled(true);
+    setStep("otp");
+
+    toast("OTP Sent", {
+      description: `Your OTP has been sent to ${mobile}.`,
+    });
+
+  } catch (err) {
+    toast("Error",{
+      description: err.message || "Failed to send OTP. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+const handleOtpSubmit = async (e) => {
+  e.preventDefault();
+
+  if (otp.length !== 6) {
+    toast("Error", {
+      description: "OTP must be 6 digits.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const url = new URL("http://192.168.100.97:8000/v1/auth/verify-otp");
+    url.searchParams.append("mobile_number", mobile);
+    url.searchParams.append("otp_token", otpToken);
+    url.searchParams.append("input_otp", otp);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to verify OTP");
+    }
+
+    const data = await response.json();
+
+    if (data.message === "OTP verified successfully") {
+      setStep("mpin");
+
+      toast("OTP Verified", {
+        description: "Your OTP was successfully verified. Please enter your MPIN.",
+      });
+    }
+
+  } catch (err) {
+    toast("Error", {
+      description: err.message || "Failed to verify OTP. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+  const handleMobileSubmit_main = async (e) => {
     e.preventDefault();
-    if (mobile.length === 10) {
-      // Simulate API call to initiate login
-      const response = {
-        status: "success",
-        data: {
-          otp_code: "848404",
-          expired_at: new Date(Date.now() + 120 * 1000).toISOString(), // 2 minutes from now // CHANGE IT TO 120
-        },
-        message: "OTP sent successfully!",
-      };
-      setExpiredAt(new Date(response.data.expired_at)); // Set expiration time
-      setTimeLeft(120); // Reset timer to 2 minutes // 120 seconds
-      setIsResendDisabled(true); // Disable resend button
-      setStep("otp");
+    if (mobile.length === 10 && accountType) {
+      setIsLoading(true);
+      setError("");
+      try {
+        // Construct the URL with query parameters
+        const url = new URL("http://192.168.100.97:8000/v1/auth/login");
+        url.searchParams.append("mobile_number", mobile);
+        url.searchParams.append("role", accountType.toUpperCase());
+  
+        console.log("Request URL:", url.toString()); // Log the full URL
+  
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "accept": "application/json", // Add the accept header
+          },
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json(); // Parse the error response
+          console.error("Error response:", errorData);
+          throw new Error(errorData.message || "Failed to send OTP");
+        }
+  
+        const data = await response.json();
+        const { otp_token, otp, message } = data;
+        setOtpToken(otp_token); // Store OTP token
+        setExpiredAt(new Date(Date.now() + 120 * 1000)); // Set expiration time
+        setTimeLeft(120); // Reset timer to 2 minutes
+        setIsResendDisabled(true); // Disable resend button
+        setStep("otp"); // Move to OTP step
+      } catch (err) {
+        setError(err.message || "Failed to send OTP. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleOtpSubmit = (e) => {
+  const handleOtpSubmit_main = async (e) => {
     e.preventDefault();
     if (otp.length === 6) {
-      // Simulate OTP verification
-      setStep("mpin");
+      setIsLoading(true);
+      setError("");
+      try {
+        // Construct the URL with query parameters
+        const url = new URL("http://192.168.100.97:8000/v1/auth/verify-otp");
+        url.searchParams.append("mobile_number", mobile);
+        url.searchParams.append("otp_token", otpToken);
+        url.searchParams.append("input_otp", otp);
+  
+        console.log("Request URL:", url.toString()); // Log the full URL
+  
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "accept": "application/json", // Add the accept header
+          },
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json(); // Parse the error response
+          console.error("Error response:", errorData);
+          throw new Error(errorData.message || "Failed to verify OTP");
+        }
+  
+        const data = await response.json();
+        if (data.message === "OTP verified successfully") {
+          setStep("mpin"); // Move to MPIN step
+        }
+      } catch (err) {
+        setError(err.message || "Failed to verify OTP. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleMpinSubmit = (e) => {
+
+  const handleMpinSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (mpin.length !== 4) {
+      toast({
+        title: "Error",
+        description: "MPIN must be 4 digits.",
+        variant: "destructive",
+      });
+      return;
+    }
+  
+    setIsLoading(true);
+    setError("");
+  
+    try {
+      const url = new URL("http://192.168.100.97:8000/v1/auth/verify-mpin");
+      url.searchParams.append("mobile_number", mobile);
+      url.searchParams.append("input_mpin", mpin);
+      url.searchParams.append("role", accountType.toUpperCase());
+  
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to verify MPIN");
+      }
+  
+      const data = await response.json();
+  
+      // ✅ Save token & role in localStorage
+      if (data.access_token) {
+        localStorage.setItem("access_token", data.access_token.access_token);
+        localStorage.setItem("user_role", data.role);
+      }
+  
+      // ✅ Show success message
+      toast({
+        title: "Success",
+        description: "Login successful! Redirecting...",
+      });
+  
+      // ✅ Redirect based on role
+      setTimeout(() => {
+        if (data.role === "MEMBER") {
+          window.location.href = "/member";
+        } else if (data.role === "ADMIN") {
+          window.location.href = "/dashboard";
+        } else if (data.role === "MERCHANT") {
+          window.location.href = "/merchant";
+        }
+      }, 1500); // Delay redirection to show the toast
+  
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to verify MPIN. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleMpinSubmit_copy_main = async (e) => {
     e.preventDefault();
     if (mpin.length === 4) {
-      alert("Successfully logged in!");
+      setIsLoading(true);
+      setError("");
+      try {
+        const url = new URL("http://192.168.100.97:8000/v1/auth/verify-mpin");
+        url.searchParams.append("mobile_number", mobile);
+        url.searchParams.append("input_mpin", mpin);
+        url.searchParams.append("role", accountType.toUpperCase());
+  
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "accept": "application/json",
+          },
+          credentials: "include", // Ensure cookies are included
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to verify MPIN");
+        }
+  
+        const data = await response.json();
+  
+        // ✅ Check if the cookie is set
+        document.cookie.split(";").forEach((cookie) => {
+          console.log("Stored Cookie:", cookie.trim());
+        });
+  
+        // ✅ Save token in local storage (optional)
+        if (data.access_token) {
+          localStorage.setItem("access_token", data.access_token.access_token);
+        }
+  
+        alert("Login successful! Redirecting...");
+        
+        // ✅ Redirect to /merchant
+        window.location.href = "/merchant";
+  
+      } catch (err) {
+        setError(err.message || "Failed to verify MPIN. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
+  
+  
+  const handleResendOtp = async () => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mobile_number: mobile,
+          role: accountType.toUpperCase(),
+        }),
+      });
 
-  const handleResendOtp = () => {
-    // Simulate resending OTP
-    const response = {
-      status: "success",
-      data: {
-        otp_code: "848404",
-        expired_at: new Date(Date.now() + 120 * 1000).toISOString(), // 2 minutes from now
-      },
-      message: "OTP sent successfully!",
-    };
-    setExpiredAt(new Date(response.data.expired_at)); // Set new expiration time
-    setTimeLeft(120); // Reset timer to 2 minutes
-    setIsResendDisabled(true); // Disable resend button
+      if (!response.ok) {
+        throw new Error("Failed to resend OTP");
+      }
+
+      const data = await response.json();
+      const { otp_token, otp, message } = data;
+      setOtpToken(otp_token); // Store new OTP token
+      setExpiredAt(new Date(Date.now() + 120 * 1000)); // Reset expiration time
+      setTimeLeft(120); // Reset timer to 2 minutes
+      setIsResendDisabled(true); // Disable resend button
+    } catch (err) {
+      setError(err.message || "Failed to resend OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Countdown timer logic
@@ -110,6 +404,12 @@ export function LoginForm({ className, ...props }) {
         </p>
       </div>
 
+      {error && (
+        <div className="text-center text-sm text-red-500">
+          {error}
+        </div>
+      )}
+
       <div className="grid gap-6">
         {step === "mobile" && (
           <div className="grid gap-2">
@@ -120,8 +420,8 @@ export function LoginForm({ className, ...props }) {
                 <SelectValue placeholder="Select account type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="member">Member</SelectItem>
-                <SelectItem value="merchant">Merchant</SelectItem>
+                <SelectItem value="MEMBER">Member</SelectItem>
+                <SelectItem value="MERCHANT">Merchant</SelectItem>
                 <SelectItem value="community_leader">Community Leader</SelectItem>
               </SelectContent>
             </Select>
@@ -212,18 +512,18 @@ export function LoginForm({ className, ...props }) {
             <Button
               type="submit"
               className="w-full"
-              disabled={otp.length !== 6} // Disable if OTP is incomplete
+              disabled={otp.length !== 6 || isLoading} // Disable if OTP is incomplete or loading
             >
-              Verify OTP
+              {isLoading ? "Verifying..." : "Verify OTP"}
             </Button>
           ) : (
             <Button
               type="button"
               className="w-full"
               onClick={handleResendOtp}
-              disabled={isResendDisabled} // Disable if resend is not allowed
+              disabled={isResendDisabled || isLoading} // Disable if resend is not allowed or loading
             >
-              Resend OTP
+              {isLoading ? "Resending..." : "Resend OTP"}
             </Button>
           )
         ) : (
@@ -231,12 +531,16 @@ export function LoginForm({ className, ...props }) {
             type="submit"
             className="w-full"
             disabled={
-              step === "mobile"
+              (step === "mobile"
                 ? mobile.length !== 10 || !accountType
-                : mpin.length !== 4
+                : mpin.length !== 4) || isLoading
             }
           >
-            {step === "mobile" ? "Send OTP" : "Login Account"}
+            {isLoading
+              ? "Loading..."
+              : step === "mobile"
+              ? "Send OTP"
+              : "Login Account"}
           </Button>
         )}
       </div>
