@@ -51,8 +51,8 @@ const Transactions = () => {
   );
 
   return (
-    <Card className="p-6 space-y-4 shadow-md">
-      <CardContent>
+
+    <>
         <h2 className="text-xl font-semibold mb-4">Transaction History</h2>
 
         <div className="mb-4 flex items-center gap-4">
@@ -151,8 +151,7 @@ const Transactions = () => {
             </Button>
           </div>
         </div>
-      </CardContent>
-    </Card>
+        </>
   );
 };
 

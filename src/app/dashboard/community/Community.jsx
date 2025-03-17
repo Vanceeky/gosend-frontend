@@ -43,31 +43,32 @@ export default function Community() {
   const itemsPerPage = 5;
 
   // Fetch Data from API
-  useEffect(() => {
-    const fetchCommunities = async () => {
-      try {
-        const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-        const response = await fetch(`http://${API_BASE_URL}:8000/v1/community/`);
-        const result = await response.json();
-
-        if (result.status === "success") {
-          const formattedData = result.data.map((item) => ({
-            id: item.community_id,
-            name: item.community_name,
-            leader: item.leader_name,
-            members: item.number_of_members,
-            points: item.reward_points,
-            date: item.date_added.split(" ")[0], // Extract YYYY-MM-DD
-          }));
-          setData(formattedData);
-        }
-      } catch (error) {
-        console.error("Error fetching communities:", error);
+  const fetchCommunities = async () => {
+    try {
+      const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
+      const response = await fetch(`http://${API_BASE_URL}/v1/community/all`);
+      const result = await response.json();
+  
+      if (result.status === "success") {
+        const formattedData = result.data.map((item) => ({
+          id: item.community_id,
+          name: item.community_name,
+          leader: item.leader_name,
+          members: item.total_members,
+          points: item.reward_points,
+        }));
+        setData(formattedData);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching communities:", error);
+    }
+  };
+  
+  // Fetch communities on mount
+  useEffect(() => {
     fetchCommunities();
   }, []);
+  
 
   // Filtered Data for Search
   const filteredData = data.filter((item) =>
@@ -108,7 +109,6 @@ export default function Community() {
               <TableHead>Leader Name</TableHead>
               <TableHead>Total Members</TableHead>
               <TableHead>Reward Points</TableHead>
-              <TableHead>Date Added</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -120,7 +120,6 @@ export default function Community() {
                   <TableCell>{item.leader}</TableCell>
                   <TableCell>{item.members}</TableCell>
                   <TableCell>{item.points}</TableCell>
-                  <TableCell>{item.date}</TableCell>
                   <TableCell className="text-right">
                   <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -131,7 +130,7 @@ export default function Community() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
                           onClick={() =>
-                            navigate(`/dashboard/community/${item.id}/`)
+                            navigate(`/dashboard/community/${item.id}`)
                           }
                         >
                           View Details

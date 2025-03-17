@@ -18,44 +18,45 @@ export default function AddCommunityDialog({ onCommunityAdded }) {
       toast.error("Please fill in all fields.");
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     try {
       const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-      const response = await fetch(`http://${API_BASE_URL}:8000/v1/community`, {
+      const response = await fetch(`http://${API_BASE_URL}/v1/community/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           community_name: communityName,
-          leader_mobile_number: leaderNumber,
+          community_leader: leaderNumber,
         }),
       });
-
-      const result = await response.json();
-
-      if (result.status === "success") {
-        toast.success("Community created successfully!");
-
-        // Notify parent component to refresh data
-        if (onCommunityAdded) {
-          onCommunityAdded();
-        }
-
-        // Reset form & close dialog
-        setCommunityName("");
-        setLeaderNumber("");
-        setIsOpen(false);
-      } else {
-        toast.error(result.message || "Failed to create community.");
+  
+      const result = await response.json(); // Parse JSON response
+  
+      // If the request failed (API returned status "error")
+      if (!response.ok || result.status === "error") {
+        throw new Error(result.message || `Request failed with status: ${response.status}`);
       }
+  
+      toast.success(result.message || "Community created successfully!");
+  
+      // Notify parent component to refresh data
+      onCommunityAdded?.();
+  
+      // Reset form & close dialog
+      setCommunityName("");
+      setLeaderNumber("");
+      setIsOpen(false);
     } catch (error) {
       console.error("Error creating community:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(error.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
+  
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

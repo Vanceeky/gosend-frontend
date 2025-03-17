@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom"
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader, DialogFooter } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { MerchantRegisterForm } from "@/components/merchant-reg-form";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Merchants = () => {
   const [merchants, setMerchants] = useState([]);
@@ -29,7 +23,7 @@ const Merchants = () => {
     const fetchMerchants = async () => {
       try {
         const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-        const response = await fetch(`http://${API_BASE_URL}:8000/v1/merchants/`);
+        const response = await fetch(`http://${API_BASE_URL}/v1/merchants/`);
         if (!response.ok) throw new Error("Failed to fetch merchants");
 
         const result = await response.json();
@@ -61,6 +55,13 @@ const Merchants = () => {
   );
 
 
+  const getInitials = (name) => {
+    const words = name.split(" ");
+    return words.length > 1
+      ? words[0][0].toUpperCase() + words[1][0].toUpperCase()
+      : words[0][0].toUpperCase();
+  };
+  
   return (
     <Card className="p-6 space-y-4 shadow-md">
       <div className="flex flex-wrap items-center gap-4">
@@ -71,6 +72,8 @@ const Merchants = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+
+        {/* 
         <Dialog>
           <DialogTrigger asChild>
             <Button>Add Merchant</Button>
@@ -79,6 +82,8 @@ const Merchants = () => {
               <MerchantRegisterForm />
           </DialogContent>
         </Dialog>
+          */}
+
       </div>
 
       {/* Table */}
@@ -86,30 +91,53 @@ const Merchants = () => {
         <Table>
           <TableHeader className="bg-gray-100">
             <TableRow>
+
+              <TableHead>Manager</TableHead>
               <TableHead>Mobile Number</TableHead>
               <TableHead>Business Name</TableHead>
               <TableHead>Business Type</TableHead>
               <TableHead>Discount</TableHead>
               <TableHead>Address</TableHead>
-              <TableHead>Coordinates</TableHead>
-              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedData.length > 0 ? (
               paginatedData.map((merchant, index) => (
                 <TableRow key={index}>
+
+                <TableCell className="flex items-center gap-2">
+
+                      <Avatar>
+                        <AvatarFallback>{getInitials(merchant.manager)}</AvatarFallback>
+                      </Avatar>
+
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Link
+                          to={`${merchant.merchant_id}`}
+                          className="font-semibold hover:underline"
+                          >
+                          {merchant.manager}
+                        </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>View Merchant Profile</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                </TableCell>
+
+
+
                   <TableCell>{merchant.mobile_number}</TableCell>
                   <TableCell>{merchant.business_name}</TableCell>
                   <TableCell>{merchant.business_type}</TableCell>
                   <TableCell>{merchant.discount}%</TableCell>
                   <TableCell>
-                    {merchant.merchant_details?.[0] ? (
+                    {merchant.details ? (
                       <>
-                        {merchant.merchant_details[0].street},{" "}
-                        {merchant.merchant_details[0].barangay},{" "}
-                        {merchant.merchant_details[0].municipality_city},{" "}
-                        {merchant.merchant_details[0].province}
+                        {merchant.details.street}, {merchant.details.barangay},{" "}
+                        {merchant.details.municipality_city}, {merchant.details.province}
                       </>
                     ) : (
                       "N/A"
@@ -119,19 +147,7 @@ const Merchants = () => {
                     {merchant.merchant_details?.[0]?.latitude},{" "}
                     {merchant.merchant_details?.[0]?.longitude}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+
                 </TableRow>
               ))
             ) : (

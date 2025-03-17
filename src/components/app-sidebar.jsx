@@ -1,20 +1,22 @@
-import * as React from "react"
+import * as React from "react";
 import {
   Command,
   LifeBuoy,
   Map,
   Send,
   LayoutDashboard,
+  ReceiptTextIcon,
+  UserRoundPenIcon,
   Users,
   Wallet,
   StoreIcon,
   Users2,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -23,95 +25,165 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import logo from '@/assets/gosend_logo.png';
 
-const data = {
-  user: {
-    name: "Ivan Sari Sari Store",
-    email: "9456656707",
-    avatar: "/avatars/shadcn.jpg",
+const menuConfig = {
+  MEMBER: {
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/member",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Transactions",
+        url: "/member/transactions",
+        icon: ReceiptTextIcon,
+      },
+      {
+        title: "Profile",
+        url: "/member/profile",
+        icon: UserRoundPenIcon,
+      },
+    ],
+    navSecondary: [],
+    projects: [],
   },
-  navMain: [
-    {
-      title: "Members",
-      url: "/dashboard/members",
-      icon: Users,
-      isActive: true,
-      items: [
-        {
-          
-          title: "Activated Members",
-          url: "/dashboard/activated-members",
-        },
-        {
-          title: "Inactive Accounts",
-          url: "/dashboard/inactive-accounts",
-        },
-      ],
-    },
+  MERCHANT: {
+    navMain: [
+      {
+        title: "Home",
+        url: "/merchant",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Transactions",
+        url: "/merchant/transactions",
+        icon: Wallet,
+      },
+      {
+        title: "Rewards",
+        url: "/merchant/rewards",
+        icon: Send,
+      },
+    ],
+    navSecondary: [],
+    projects: [],
+  },
+  LEADER: {
+    navMain: [
+      {
+        title: "Members",
+        url: "/dashboard/members",
+        icon: Users,
+        items: [
+          {
+            title: "Activated Members",
+            url: "/dashboard/activated-members",
+          },
+          {
+            title: "Inactive Accounts",
+            url: "/dashboard/inactive-accounts",
+          },
+        ],
+      },
+    ],
+    navSecondary: [],
+    projects: [],
+  },
+  INVESTOR: {
+    navMain: [
+      {
+        title: "Home",
+        url: "/investor",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Members",
+        url: "/investor/members",
+        icon: ReceiptTextIcon,
+      },
+      {
+        title: "Community",
+        url: "/investor/community",
+        icon: UserRoundPenIcon,
+      },
+      {
+        title: "Rewards",
+        url: "/investor/rewards",
+        icon: UserRoundPenIcon,
+      },
+    ],
+    navSecondary: [],
+    projects: [],
+  },
+  ADMIN: {
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "MotherWallet",
+        url: "/dashboard/motherwallet",
+        icon: Wallet,
+      },
+      {
+        title: "Members",
+        url: "/dashboard/members",
+        icon: Users,
+        isActive: true,
+        items: [
+          {
+            
+            title: "Activated Members",
+            url: "/dashboard/activated-members",
+          },
+          {
+            title: "Inactive Accounts",
+            url: "/dashboard/inactive-accounts",
+          },
+        ],
+      },
+      {
+        title: "Merchants",
+        url: "/dashboard/merchants",
+        icon: StoreIcon,
+      },
+      {
+        title: "Community",
+        url: "/dashboard/community",
+        icon: Users2,
+      },
+      {
+        title: "Travel",
+        url: "#",
+        icon: Map,
+      },
 
-  ],
+    ],
+    navSecondary: [
+      {
+        title: "MotherWallet",
+        url: "/dashboard/motherwallet",
+        icon: Wallet,
+      },
+    ],
+    projects: [
+      
+    ],
+  },
+};
 
-  navSecondary: [
-    {
-      title: "Dashboard",
-      url: "/merchant",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Transactions",
-      url: "/merchant/transactions",
-      icon: Send,
-    },
-    {
-      title: "Rewards",
-      url: "/merchant/rewards",
-      icon: Send,
-    },
-    {
-      title: "Profile",
-      url: "/merchant/manage-profile",
-      icon: Send,
-    },
-  ],
+export function AppSidebar({ ...props }) {
+  
+  const userRole = localStorage.getItem("user_role") || "MEMBER";
+  const menuData = menuConfig[userRole] || menuConfig.MEMBER;
 
-  projects: [
-    {
-      name: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "MotherWallet",
-      url: "/dashboard/motherwallet",
-      icon: Wallet,
-    },
-    {
-      name: "Merchants",
-      url: "/dashboard/merchants",
-      icon: StoreIcon,
-    },
-    {
-      name: "Community",
-      url: "/dashboard/community",
-      icon: Users2,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
-
-
-
-export function AppSidebar({
-  ...props
-}) {
   return (
-    (<Sidebar variant="inset" {...props}>
+    <Sidebar variant="inset" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -132,16 +204,13 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-
-        <NavProjects projects={data.projects} />
-        <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-        
+        <NavMain items={menuData.navMain} />
+        <NavSecondary items={menuData.navSecondary} className="mt-auto" />
+        <NavProjects projects={menuData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name: "Ivan Sari Sari Store", email: "9456656707", avatar: "/avatars/shadcn.jpg" }} />
       </SidebarFooter>
-
-    </Sidebar>)
+    </Sidebar>
   );
 }

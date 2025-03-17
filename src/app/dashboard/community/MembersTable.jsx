@@ -47,106 +47,104 @@ const MembersTable = ({ members }) => {
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Community Members</CardTitle>
-        <div className="flex items-center gap-4">
-          <Input 
-            placeholder="Search Members..." 
-            className="w-[300px]" 
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          <Select value={kycStatus} onValueChange={handleKycStatusChange}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="KYC Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">KYC</SelectItem>
-              <SelectItem value="verified">Verified</SelectItem>
-              <SelectItem value="not_verified">Not Verified</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={activationStatus} onValueChange={handleActivationStatusChange}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Activation Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Is Activated</SelectItem>
-              <SelectItem value="activated">Activated</SelectItem>
-              <SelectItem value="not_activated">Not Activated</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
+      <>
+          <h2>Community Members</h2>
 
-      <CardContent>
-        {/* Table */}
-        <div className="overflow-auto h-[60vh] border rounded-lg p-2">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Mobile Number</TableHead>
-                <TableHead>KYC Status</TableHead>
-                <TableHead>Activation Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            
-            <TableBody>
-              {filteredMembers.map((member) => (
-                <TableRow key={member.user_id}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Avatar>
-                        <AvatarFallback>
-                          {getAvatarFallback(member.first_name, member.last_name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      {member.first_name} {member.middle_name} {member.last_name} {member.suffix_name || ""}
-                    </div>
-                  </TableCell>
-                  <TableCell>{member.mobile_number}</TableCell>
-                  <TableCell>{member.is_kyc_verified ? "✅ Yes" : "❌ No"}</TableCell>
-                  <TableCell>{member.is_activated ? "✅ Yes" : "❌ No"}</TableCell>
-                  
-                  {/* Actions Dropdown */}
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <div className="flex items-center gap-4 mb-2">
+            <Input 
+              placeholder="Search Members..." 
+              className="w-[300px]" 
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <Select value={kycStatus} onValueChange={handleKycStatusChange}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="KYC Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">KYC</SelectItem>
+                <SelectItem value="verified">Verified</SelectItem>
+                <SelectItem value="not_verified">Not Verified</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={activationStatus} onValueChange={handleActivationStatusChange}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Activation Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Is Activated</SelectItem>
+                <SelectItem value="activated">Activated</SelectItem>
+                <SelectItem value="not_activated">Not Activated</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-                        {/* Activate Account if not activated */}
-                        {!member.is_activated && (
-                          <DropdownMenuItem>
-                            Activate Account
-                          </DropdownMenuItem>
-                        )}
-
-                        <DropdownMenuSeparator />
-                        
-                        {/* View Details */}
-                        <DropdownMenuItem>
-                          <Link to={`/dashboard/member/${member.user_id}`} className="w-full">
-                            View Details
-                          </Link>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+          {/* Table */}
+          <div className="overflow-auto h-[60vh] border rounded-lg p-2">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Mobile Number</TableHead>
+                  <TableHead>KYC Status</TableHead>
+                  <TableHead>Activation Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>  
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              
+              <TableBody>
+                {filteredMembers.map((member) => (
+                  <TableRow key={member.user_id}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar>
+                          <AvatarFallback>
+                            {getAvatarFallback(member.first_name, member.last_name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        {member.first_name} {member.middle_name} {member.last_name} {member.suffix_name || ""}
+                      </div>
+                    </TableCell>
+                    <TableCell>{member.mobile_number}</TableCell>
+                    <TableCell>{member.is_kyc_verified ? "✅ Yes" : "❌ No"}</TableCell>
+                    <TableCell>{member.is_activated ? "✅ Yes" : "❌ No"}</TableCell>
+                    
+                    {/* Actions Dropdown */}
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+                          {/* Activate Account if not activated */}
+                          {!member.is_activated && (
+                            <DropdownMenuItem>
+                              Activate Account
+                            </DropdownMenuItem>
+                          )}
+
+                          <DropdownMenuSeparator />
+                          
+                          {/* View Details */}
+                          <DropdownMenuItem>
+                            <Link to={`/dashboard/member/${member.user_id}`} className="w-full">
+                              View Details
+                            </Link>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>  
+            </Table>
+          </div>
+        </>
+
   );
 };
 

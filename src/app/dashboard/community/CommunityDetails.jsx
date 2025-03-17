@@ -31,12 +31,13 @@ export default function CommunityDetails() {
   const [community, setCommunity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
   useEffect(() => {
     const fetchCommunityDetails = async () => {
       try {
         const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
         const response = await fetch(
-          `http://${API_BASE_URL}:8000/v1/community/${community_id}/members`
+          `http://${API_BASE_URL}/v1/community/${community_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch community details");
@@ -60,7 +61,7 @@ export default function CommunityDetails() {
     <div className="flex justify-center h-screen">
       <div className="w-full flex gap-4">
         {/* User Info & Tabs Card (8/12) */}
-        <Card className="w-full md:w-8/12 flex flex-col">
+        <Card className="w-full ">
          
             <CardHeader className="">
               
@@ -96,17 +97,6 @@ export default function CommunityDetails() {
                               <Card className="w-full">
                                 <CardContent className="space-y-4 w-full">
                                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 mt-3">
-                                    {/* Wallet Balance Card */}
-                                    <Card className="p-4">
-                                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-0">
-                                        <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
-                                        <Wallet className="h-4 w-4 text-muted-foreground" />
-                                      </CardHeader>
-                                      <CardContent className="p-0">
-                                        <div className="text-2xl font-bold">₱ 8,512</div>
-                                      </CardContent>
-                                    </Card>
-
                                     {/* Reward Points Card */}
                                     <Card className="p-4">
                                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-0">
@@ -114,7 +104,7 @@ export default function CommunityDetails() {
                                         <WalletMinimal className="h-4 w-4 text-muted-foreground" />
                                       </CardHeader>
                                       <CardContent className="p-0">
-                                        <div className="text-2xl font-bold">1,279</div>
+                                        <div className="text-2xl font-bold">{community?.reward_points}</div>
                                       </CardContent>
                                     </Card>
                                   </div>
@@ -124,10 +114,10 @@ export default function CommunityDetails() {
                                   {/* Read-only User ID with Copy Button */}
                                   <div className="flex flex-col gap-1 mt-3">
                                     <Label htmlFor="user-id" className="text-sm font-medium">
-                                      User ID
+                                      Leader User ID
                                     </Label>
                                     <div className="flex items-center gap-2">
-                                      <Input id="user-id" defaultValue="123456" readOnly className="w-full cursor-pointer" />
+                                      <Input id="user-id" defaultValue={community?.leader.user_id} readOnly className="w-full cursor-pointer" />
                                       <Button type="button" size="sm" className="px-3">
                                         <span className="sr-only">Copy</span>
                                         <Copy className="w-4 h-4" />
@@ -139,11 +129,11 @@ export default function CommunityDetails() {
                                   <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1">
                                       <Label htmlFor="mobile">Mobile Number</Label>
-                                      <Input id="mobile" type="text" readOnly defaultValue="+1234567890" className="w-full cursor-pointer" />
+                                      <Input id="mobile" type="text" readOnly defaultValue={community?.leader.mobile_number} className="w-full cursor-pointer" />
                                     </div>
                                     <div className="space-y-1">
                                       <Label htmlFor="account-type">Account Type</Label>
-                                      <Input id="account-type" type="text" readOnly defaultValue="Member" className="w-full cursor-pointer" />
+                                      <Input id="account-type" type="text" readOnly defaultValue={community?.leader.account_type} className="w-full cursor-pointer" />
                                     </div>
                                   </div>
 
@@ -161,13 +151,13 @@ export default function CommunityDetails() {
                                   {/* Community Name */}
                                   <div className="flex flex-col gap-1 mt-3">
                                     <Label htmlFor="user-id" className="text-sm font-medium">
-                                      Community Name
+                                      Community ID
                                     </Label>
                                     <div className="flex items-center gap-2">
-                                      <Input id="user-id" defaultValue="BigBoss" readOnly className="w-full cursor-pointer" />
+                                      <Input id="user-id" defaultValue={community_id} readOnly className="w-full cursor-pointer" />
                                       <Button type="button" size="sm" className="px-3">
                                         <span className="sr-only">View</span>
-                                        <ExternalLink className="w-4 h-4" />
+                                        <Copy className="w-4 h-4" />
                                       </Button>
                                     </div>
                                   </div>
@@ -243,22 +233,22 @@ export default function CommunityDetails() {
                       
                   </h2>
                   <TooltipProvider>
-  <div className="flex items-center gap-2">
-    <p className="text-xs sm:text-sm text-gray-500">
-      Leader: {community.leader.first_name} {community.leader.middle_name} {community.leader.last_name} {community.leader.suffix_name || ""}
-    </p>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link to={`/dashboard/member/${community.leader.user_id}`} className="text-gray-500 hover:text-gray-700">
-          <ExternalLinkIcon className="w-4 h-4" />
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent>
-        View Profile
-      </TooltipContent>
-    </Tooltip>
-  </div>
-</TooltipProvider>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        Leader: {community.leader.first_name} {community.leader.middle_name} {community.leader.last_name} {community.leader.suffix_name || ""}
+                      </p>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link to={`/dashboard/member/${community.leader.user_id}`} className="text-gray-500 hover:text-gray-700">
+                            <ExternalLinkIcon className="w-4 h-4" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          View Profile
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
 
                 </div>
      
@@ -313,31 +303,7 @@ export default function CommunityDetails() {
    
         </Card>
 
-        {/* Referred Users - Sheet for small screens */}
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent side="right" className="w-100">
-            <Card>
-              <CardHeader>
-                <CardTitle>Referred Users</CardTitle>
-                <CardDescription>List of users you have referred.</CardDescription>
-              </CardHeader>
-              <CardContent>
 
-              </CardContent>
-            </Card>
-          </SheetContent>
-        </Sheet>
-
-        {/* Referred Users Card for large screens */}
-        <Card className="hidden md:flex w-4/12 flex-col">
-          <CardHeader>
-            <CardTitle>Referred Users</CardTitle>
-            <CardDescription>List of users you have referred.</CardDescription>
-          </CardHeader>
-          <CardContent>
-        
-          </CardContent>
-        </Card>
 
       </div>
     </div>

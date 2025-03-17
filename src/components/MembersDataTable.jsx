@@ -18,7 +18,6 @@ export default function MembersDataTable({ data = [], onActivate }) {
   const [activatedFilter, setActivatedFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-
   const itemsPerPage = 5;
 
   if (!Array.isArray(data)) {
@@ -39,9 +38,6 @@ export default function MembersDataTable({ data = [], onActivate }) {
   const handleActivateSuccess = (userId) => {
     onActivate(userId); // Call parent function to update state
   };
-
-
-  
 
   return (
     <Card className="p-6 space-y-4 shadow-md">
@@ -117,10 +113,17 @@ export default function MembersDataTable({ data = [], onActivate }) {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Avatar>
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>
+                        {user.name
+                          .split(" ") // Split the name into words
+                          .slice(0, 2) // Take only the first two words
+                          .map(word => word.charAt(0)) // Get the first character of each
+                          .join("")
+                          .toUpperCase()} 
+                      </AvatarFallback>
+
                       </Avatar>
-                      {user.name}
+                      {user.name || "N/A"} 
                     </div>
                   </TableCell>
 
@@ -135,9 +138,7 @@ export default function MembersDataTable({ data = [], onActivate }) {
 
                   {/* Actions Dropdown */}
                   <TableCell>
-                    
                     <DropdownMenu>
-
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal />
@@ -153,9 +154,8 @@ export default function MembersDataTable({ data = [], onActivate }) {
                             onConfirm={() => onActivate(user.id)}
                             triggerText="Activate Account"
                             user={user}
-                            onActivateSuccess={handleActivateSuccess} 
+                            onActivateSuccess={handleActivateSuccess}
                           />
-
                         )}
 
                         <DropdownMenuSeparator />
@@ -174,9 +174,7 @@ export default function MembersDataTable({ data = [], onActivate }) {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-
                   </TableCell>
-
                 </TableRow>
               ))
             ) : (

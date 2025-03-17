@@ -24,6 +24,7 @@ export function LoginForm({ className, ...props }) {
   const [isLoading, setIsLoading] = useState(false); // Loading state for API calls
   const [error, setError] = useState(""); // Error message
 
+  const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
 
 
 const handleMobileSubmit = async (e) => {
@@ -42,7 +43,8 @@ const handleMobileSubmit = async (e) => {
   setError("");
 
   try {
-    const url = new URL("http://192.168.100.97:8000/v1/auth/login");
+   // const response = await fetch(`http://${API_BASE_URL}/v1/merchants/`);
+    const url = new URL(`http://${API_BASE_URL}/v1/auth/login`);
     url.searchParams.append("mobile_number", mobile);
     url.searchParams.append("role", accountType.toUpperCase());
 
@@ -94,7 +96,7 @@ const handleOtpSubmit = async (e) => {
   setError("");
 
   try {
-    const url = new URL("http://192.168.100.97:8000/v1/auth/verify-otp");
+    const url = new URL(`http://${API_BASE_URL}/v1/auth/verify-otp`);
     url.searchParams.append("mobile_number", mobile);
     url.searchParams.append("otp_token", otpToken);
     url.searchParams.append("input_otp", otp);
@@ -137,7 +139,7 @@ const handleOtpSubmit = async (e) => {
       setError("");
       try {
         // Construct the URL with query parameters
-        const url = new URL("http://192.168.100.97:8000/v1/auth/login");
+        const url = new URL(`http://${API_BASE_URL}/v1/auth/login`);
         url.searchParams.append("mobile_number", mobile);
         url.searchParams.append("role", accountType.toUpperCase());
   
@@ -178,7 +180,7 @@ const handleOtpSubmit = async (e) => {
       setError("");
       try {
         // Construct the URL with query parameters
-        const url = new URL("http://192.168.100.97:8000/v1/auth/verify-otp");
+        const url = new URL(`http://${API_BASE_URL}/v1/auth/verify-otp`);
         url.searchParams.append("mobile_number", mobile);
         url.searchParams.append("otp_token", otpToken);
         url.searchParams.append("input_otp", otp);
@@ -227,7 +229,7 @@ const handleOtpSubmit = async (e) => {
     setError("");
   
     try {
-      const url = new URL("http://192.168.100.97:8000/v1/auth/verify-mpin");
+      const url = new URL(`http://${API_BASE_URL}/v1/auth/verify-mpin`);
       url.searchParams.append("mobile_number", mobile);
       url.searchParams.append("input_mpin", mpin);
       url.searchParams.append("role", accountType.toUpperCase());
@@ -248,7 +250,7 @@ const handleOtpSubmit = async (e) => {
   
       // ✅ Save token & role in localStorage
       if (data.access_token) {
-        localStorage.setItem("access_token", data.access_token.access_token);
+        localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user_role", data.role);
       }
   
@@ -270,8 +272,7 @@ const handleOtpSubmit = async (e) => {
       }, 1500); // Delay redirection to show the toast
   
     } catch (err) {
-      toast({
-        title: "Error",
+      toast("Error", {
         description: err.message || "Failed to verify MPIN. Please try again.",
         variant: "destructive",
       });
@@ -286,7 +287,7 @@ const handleOtpSubmit = async (e) => {
       setIsLoading(true);
       setError("");
       try {
-        const url = new URL("http://192.168.100.97:8000/v1/auth/verify-mpin");
+        const url = new URL("http://192.0.0.2:9000/v1/auth/verify-mpin");
         url.searchParams.append("mobile_number", mobile);
         url.searchParams.append("input_mpin", mpin);
         url.searchParams.append("role", accountType.toUpperCase());

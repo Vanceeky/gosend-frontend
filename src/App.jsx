@@ -8,6 +8,8 @@ import HomeRoutes from "@/routes/HomeRoutes";
 import DashboardRoutes from "@/routes/DashboardRoutes"; // 👈 Import Dashboard Routes
 import CommunityRoutes from "@/routes/CommunityRoutes";
 import MerchantRoutes from "@/routes/MerchantRoutes.jsx"
+import MemberRoutes from "@/routes/MemberRoutes.jsx"
+import InvestorRoutes from "./routes/InvestorRoutes.jsx";
 
 import ErrorPage from "./components/ErrorPage";
 
@@ -42,13 +44,24 @@ function App() {
                     <Route path="/dashboard/*" element={<DashboardRoutes />} />
                 </Route>
 
-                <Route element={<ProtectedRoute allowedRoles={["LEADER", "ADMIN"]} />}>
+                <Route element={<ProtectedRoute allowedRoles={["LEADER"]} />}>
                     <Route path="/community/*" element={<CommunityRoutes />} />
                 </Route>
 
-                <Route element={<ProtectedRoute allowedRoles={["MERCHANT", "ADMIN"]} />}>
+                <Route element={<ProtectedRoute allowedRoles={["MERCHANT"]} />}>
                     <Route path="/merchant/*" element={<MerchantRoutes />} />
                 </Route>
+
+                <Route element={<ProtectedRoute allowedRoles={["MEMBER"]} />}>
+                    <Route path="/member/*" element={<MemberRoutes />} />
+                </Route>
+
+
+                <Route element={<ProtectedRoute allowedRoles={["INVESTOR"]} />}>
+                    <Route path="/investor/*" element={<InvestorRoutes />} />
+                </Route>
+
+
           <Route path="*" element={<ErrorPage />} />
 
         </Routes>

@@ -59,8 +59,7 @@ const Rewards = () => {
   const totalPages = Math.ceil(filteredRewards.length / itemsPerPage);
 
   return (
-    <Card className="p-4 w-full max-w-[100%] h-auto md:h-[600px] mx-auto flex flex-col">
-      <CardContent className="space-y-4 flex-grow flex flex-col">
+    <>
         <h2 className="text-2xl font-bold text-center md:text-left">Reward History</h2>
 
         {/* Search & Date Filter */}
@@ -169,8 +168,7 @@ const Rewards = () => {
             )}
           </DialogContent>
         </Dialog>
-      </CardContent>
-    </Card>
+    </>
   );
 };
 

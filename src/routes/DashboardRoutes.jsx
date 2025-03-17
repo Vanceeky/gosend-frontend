@@ -29,7 +29,7 @@ function DashboardRoutes() {
         <Route path="inactive-accounts" element={<InactiveAccounts />} />
 
         <Route path="merchants" element={<Merchants />} />
-        <Route path="merchant/:merchant_id" element={<MerchantProfile />} />
+        <Route path="merchants/:merchant_id" element={<MerchantProfile />} />
 
 
         <Route path="motherwallet" element={<Motherwallet />} />

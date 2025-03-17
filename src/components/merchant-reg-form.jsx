@@ -164,7 +164,9 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
     console.log('Payload:', payload);
 
     try {
-      const url = `http://192.168.1.9:8000/v1/merchants/create/${referrer_id}?referral_id=${referrer_id}`;
+      
+      const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
+      const url = `http://${API_BASE_URL}/v1/merchant/create/${referrer_id}?referral_id=${referrer_id}`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
