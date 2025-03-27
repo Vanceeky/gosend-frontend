@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, Typography } from "@material-tailwind/react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import bg from '@/assets/image/image2.1.png';
 import bg1 from '@/assets/image/applelogo.png';
 import bg2 from '@/assets/image/google.png';
@@ -70,10 +70,10 @@ const AboutUs = () => {
         </div>
 
         {/* Mission & Vision */}
-        <div className="grid md:grid-cols-2 gap-8 mb-10 px-6  bg-orange-500 py-10 ">
+        <div className="grid md:grid-cols-2 gap-8 mb-10 px-6 bg-orange-500 py-10">
           {[
-            { title: "Our Mission", text: "To provide efficient, secure, and sustainable delivery solutions that connect businesses and individuals seamlessly." },
-            { title: "Our Vision", text: "To become the leading delivery platform, bridging distances and enhancing convenience through innovation and technology." }
+            { title: "Our Mission", text: "To provide a secure, convenient, and rewarding digital payment solution that empowers businesses and individuals." },
+            { title: "Our Vision", text: "To be the leading e-wallet platform, making transactions seamless, rewarding, and accessible for everyone." }
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -91,14 +91,14 @@ const AboutUs = () => {
 
         {/* Why Choose Us */}
         <div className="mb-10 mx-auto max-w-7xl px-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Why Choose GoSend?</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Why Choose GoSend eWallet?</h2>
+          <div className="text-1xl grid md:grid-cols-2 gap-6">
             {[
-              { title: "Fast & Reliable", description: "Same-day and next-day deliveries.", icon: "🚀" },
-              { title: "Real-Time Tracking", description: "Stay updated on your package.", icon: "📍" },
-              { title: "Affordable Rates", description: "Cost-effective solutions.", icon: "💰" },
-              { title: "Eco-Friendly", description: "Sustainable shipping options.", icon: "🌱" },
-              { title: "24/7 Support", description: "Dedicated customer assistance.", icon: "💬" }
+              { title: "Secure & Fast Transactions", description: "Enjoy seamless and secure payments with GoSend eWallet.", icon: "🔒" },
+              { title: "Affordable & Convenient", description: "Low transaction fees and easy wallet management.", icon: "💰" },
+              { title: "Exclusive Rewards", description: "Earn GoPoints and unlock special discounts with every transaction.", icon: "🎁" },
+              { title: "Eco-Friendly Incentives", description: "Get rewarded for choosing sustainable and cashless payments.", icon: "🌱" },
+              { title: "24/7 Support", description: "Reliable customer assistance whenever you need it.", icon: "💬" }
             ].map((item, index) => (
               <motion.div
                 key={index}
@@ -107,17 +107,16 @@ const AboutUs = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Card className="p-4 shadow-md border">
-                  <CardBody>
-                    <Typography variant="h5" color="blue-gray" className="mb-2">
-                      {item.icon} {item.title}
-                    </Typography>
-                    <Typography>{item.description}</Typography>
-                  </CardBody>
+                  <CardContent>
+                    <CardTitle className="mb-2">{item.icon} {item.title}</CardTitle>
+                    <p>{item.description}</p>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
           </div>
         </div>
+
 
         {/* Rewards Program */}
         <motion.div
@@ -127,15 +126,14 @@ const AboutUs = () => {
           className="mb-10 px-6"
         >
           <div className="bg-orange-200 p-6 rounded-xl shadow-md">
-            <h2 className="text-2xl font-semibold text-orange-800 mb-4">Earn Rewards with Every Delivery!</h2>
+            <h2 className="text-2xl font-semibold text-orange-800 mb-4">Earn Rewards with Every Transactions!</h2>
             <p className="text-gray-700 leading-relaxed">
-              Every action with GoSend earns you reward points! Send a package, refer friends, or choose eco-friendly options
-              to accumulate points and redeem exclusive benefits.
+              Every action with GoSend eWallet earns you GoPoints! Complete transactions, send packages, refer friends, or choose eco-friendly options to accumulate points and unlock exclusive rewards.
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2 mt-3">
-              <li>🎁 <strong>Earn Points</strong> – Get rewarded for deliveries and referrals.</li>
-              <li>💳 <strong>Redeem Rewards</strong> – Use points for discounts and free services.</li>
-              <li>🌟 <strong>VIP Perks</strong> – Unlock exclusive benefits with higher reward tiers.</li>
+              <li>🎁 <strong>Earn GoPoints</strong> – Get rewarded for every transaction, and referral with GoSend eWallet.</li>
+              <li>💳 <strong>Redeem Rewards</strong> – Use GoPoints for discounts, cashback, and exclusive perks.</li>
+              <li>🌟 <strong>VIP Tiers</strong> – Unlock premium benefits and priority services as you level up with GoSend eWallet.</li>
             </ul>
           </div>
         </motion.div>
