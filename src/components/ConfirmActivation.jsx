@@ -10,6 +10,7 @@ export default function ConfirmActivation({ user, onActivateSuccess  }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [referenceId, setReferenceId] = useState(null);
   const [otp, setOtp] = useState("");
+  const [memberId, setMemberId] = useState(null);
   const [step, setStep] = useState(1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -26,11 +27,11 @@ export default function ConfirmActivation({ user, onActivateSuccess  }) {
     setIsProcessing(true);
     try {
       const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-      const response = await fetch(`http:///${API_BASE_URL}/v1/users/initiate-member-activation`, {
+      const response = await fetch(`http:///${API_BASE_URL}/v1/admin/initiate-member-activation`, {
         method: "POST",
+        credentials: "include",
         headers: { 
           "Content-Type": "application/json", 
-          "Authorization": `Bearer ${authToken}` 
         },
         body: JSON.stringify({ user_id: user.user_id }),
       });
@@ -38,6 +39,7 @@ export default function ConfirmActivation({ user, onActivateSuccess  }) {
       
       if (response.ok) {
         setReferenceId(data.data.Transaction_id);
+        setMemberId(user.id);
         setStep(2);
       } else {
         toast.error(data.message || "Failed to initiate activation");
@@ -51,26 +53,35 @@ export default function ConfirmActivation({ user, onActivateSuccess  }) {
   };
 
   const handleProcessActivation = async () => {
+    if (!otp || otp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP.");
+      return;
+    }
     setIsProcessing(true);
+    
     try {
-      const response = await fetch("http://192.168.1.9:8000/v1/users/process-member-activation", {
+      const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
+      const response = await fetch(`http:///${API_BASE_URL}/v1/admin/process-member-activation`, {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json", 
-          "Authorization": `Bearer ${authToken}` 
-        },
-        body: JSON.stringify({ reference_id: referenceId, otp_code: otp }),
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Transaction_id: referenceId, // Ensure correct field name
+          otp_code: otp,
+          member_id: memberId,
+        }),
       });
-      const data = await response.json();
-      
-      if (response.ok) {
-        console.log("Backend Response:", data); // Log the response
-        toast.success("Activation successful");
-        setIsDialogOpen(false); // Close dialog
   
-        // Ensure the correct value is passed
-        console.log("Calling onActivateSuccess with:", user.user_id, data.data.new_wallet_balance); // Debugging
-        onActivateSuccess(user.user_id, data.data.new_wallet_balance);
+      const data = await response.json();
+      console.log("API Response:", data);
+  
+      if (data.status === 'success') {
+        toast.success(data.message || "Member activation processed successfully");
+  
+        setIsDialogOpen(false); // Close the dialog
+  
+        console.log("Calling onActivateSuccess with:", memberId, data.data.success); // Debugging
+        onActivateSuccess(memberId); 
       } else {
         toast.error(data.message || "Activation failed");
       }
@@ -81,6 +92,7 @@ export default function ConfirmActivation({ user, onActivateSuccess  }) {
       setIsProcessing(false);
     }
   };
+  
 
 
 
@@ -115,6 +127,7 @@ export default function ConfirmActivation({ user, onActivateSuccess  }) {
           <>
             <DialogDescription>Enter the OTP to complete activation.</DialogDescription>
             <div className="space-y-2">
+              <Input type="text" value={memberId} readOnly className="cursor-pointer" />
               <Label>Reference ID</Label>
               <Input type="text" value={referenceId} readOnly className="cursor-pointer" />
               <Label>OTP</Label>

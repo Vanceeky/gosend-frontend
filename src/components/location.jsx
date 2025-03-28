@@ -55,9 +55,10 @@ export default function LocationForm({
 
   useEffect(() => {
     if (selectedRegion?.code) {
-      fetchData(`https://psgc.gitlab.io/api/provinces?region_code=${selectedRegion.code}`).then(setProvinces);
+      fetchData(`https://psgc.gitlab.io/api/regions/${selectedRegion.code}/provinces/`).then(setProvinces);
     }
   }, [selectedRegion]);
+  
 
   useEffect(() => {
     if (selectedProvince?.code) {

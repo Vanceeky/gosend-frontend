@@ -18,7 +18,7 @@ const Index = () => {
           title="Wanna be our business partner?"
           description="Our Community is ready to connect with your business"
           primaryButtonText="Become a Merchant"
-          primaryButtonLink="/register"
+          primaryButtonLink="/register-merchant"
           secondaryButtonText="Learn More"
           secondaryButtonLink="/about"
         />

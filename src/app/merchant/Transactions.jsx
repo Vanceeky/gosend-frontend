@@ -1,157 +1,182 @@
-import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { format, parseISO, isValid } from "date-fns";
-
-// Updated transactions array with "name" field
-const transactions = [
-  { id: "TXN12345", name: "John Doe", date: "2025-03-12", amount: "$150.00", status: "Completed" },
-  { id: "TXN67890", name: "Jane Smith", date: "2025-03-11", amount: "$200.00", status: "Pending" },
-  { id: "TXN54321", name: "Alice Johnson", date: "2025-03-10", amount: "$75.00", status: "Completed" },
-  { id: "TXN78901", name: "Bob Williams", date: "2025-03-09", amount: "$300.00", status: "Failed" },
-];
-
+import { Calendar as CalendarIcon, Eraser } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Card } from "@/components/ui/card";
 const Transactions = () => {
+  const [transactions, setTransactions] = useState([]);
   const [search, setSearch] = useState("");
   const [dateRange, setDateRange] = useState({ from: null, to: null });
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
   const itemsPerPage = 10;
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      const cookieValue = parts.pop().split(";").shift();
+      console.log(`${name}:`, cookieValue);
+      return cookieValue;
+    }
+    console.log(`Cookie "${name}" not found.`);
+    return null;
+  };
+  
+  // Example
+  getCookie("access_token");
+  getCookie("account_type")
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
+    
+        const response = await fetch(`http://${API_BASE_URL}/v1/merchant/purchase/history`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json",
+          }
+        });
+
+ 
+    
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Unauthorized");
+        }
+    
+        const data = await response.json();
+        setTransactions(data.data?.purchases || []);
+      } catch (error) {
+        console.error("Failed to fetch transactions:", error);
+      }
+    };
+    
+  
+    fetchTransactions();
+  }, []);
+  
 
   const clearDateRange = () => setDateRange({ from: null, to: null });
 
-  const filteredTransactions = transactions.filter(txn => {
-    const matchesSearch = txn.id.toLowerCase().includes(search.toLowerCase()) ||
-      txn.name.toLowerCase().includes(search.toLowerCase()) ||
-      txn.amount.includes(search) ||
-      txn.status.toLowerCase().includes(search.toLowerCase()) ||
-      txn.date.includes(search);
+  const filteredTransactions = transactions.filter((txn) => {
+    const matchesSearch = txn.name.toLowerCase().includes(search.toLowerCase()) || txn.reference_id.toLowerCase().includes(search.toLowerCase());
 
-    const txnDate = parseISO(txn.date);
+    const txnDate = parseISO(txn.purchase_date);
     const withinDateRange =
       (!dateRange.from || (isValid(txnDate) && txnDate >= dateRange.from)) &&
       (!dateRange.to || (isValid(txnDate) && txnDate <= dateRange.to));
 
-    const matchesStatus = statusFilter === "" || txn.status === statusFilter;
+    const matchesStatus = statusFilter === "" || txn.status.toLowerCase() === statusFilter.toLowerCase();
 
     return matchesSearch && withinDateRange && matchesStatus;
   });
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
-  const paginatedData = filteredTransactions.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedData = filteredTransactions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const getInitials = (name) => {
+    const words = name.split(" ");
+    return words.length > 1
+      ? words[0][0].toUpperCase() + words[1][0].toUpperCase()
+      : words[0][0].toUpperCase();
+  };
 
   return (
+    <Card class="p-2">
+      <h2 className="text-xl font-semibold mb-4">Transaction History</h2>
 
-    <>
-        <h2 className="text-xl font-semibold mb-4">Transaction History</h2>
+      <div className="mb-4 flex items-center gap-4">
+        <Input
+          placeholder="Search by customer or reference ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-1/3 p-2 border rounded-md"
+        />
 
-        <div className="mb-4 flex items-center gap-4">
-          <Input
-            placeholder="Search transactions..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-1/3 p-2 border rounded-md"
-          />
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className={cn("w-full md:w-[250px] justify-start text-left font-normal", !dateRange.from && !dateRange.to && "text-muted-foreground")}>              
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {dateRange.from && dateRange.to ? `${format(dateRange.from, "PPP")} - ${format(dateRange.to, "PPP")}` : "Pick a date range"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start">
+            <Calendar mode="range" selected={dateRange} onSelect={setDateRange} numberOfMonths={1} />
+          </PopoverContent>
+        </Popover>
 
-          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-1/3 flex justify-between items-center">
-                {dateRange.from && dateRange.to
-                  ? `${format(dateRange.from, "MMM dd, yyyy")} - ${format(dateRange.to, "MMM dd, yyyy")}`
-                  : "Select Date Range"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="start">
-              <Calendar mode="range" selected={dateRange} onSelect={setDateRange} numberOfMonths={1} />
-            </PopoverContent>
-          </Popover>
-          
-          <Button variant="destructive" onClick={clearDateRange} disabled={!dateRange.from && !dateRange.to}>
-            Clear Date
-          </Button>
-        
-        {/* Switched positions: Status Filter appears before Clear Date now */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline" onClick={clearDateRange} className="flex items-center justify-center w-full md:w-[50px]">
+              <Eraser className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Clear Date Range</TooltipContent>
+        </Tooltip>
+
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                {statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setStatusFilter("Completed")}>Completed</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("Pending")}>Pending</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("Failed")}>Failed</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("")}>Clear Filter</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          </div>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">{statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setStatusFilter("completed")}>Completed</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("pending")}>Pending</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("failed")}>Failed</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("")}>Clear Filter</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
-        <div className="overflow-auto h-[63vh] border rounded-lg">
-          <Table>
-            <TableHeader className="bg-gray-100">
-              <TableRow>
-                <TableHead>Transaction ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
+      <div className="overflow-auto h-[63vh] border rounded-lg">
+        <Table>
+          <TableHeader className="bg-gray-100">
+            <TableRow>
+              <TableHead>Customer</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Reference ID</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedData.map((txn) => (
+              <TableRow key={txn.purchase_id}>
+                <TableCell className="flex items-center gap-2">
+                  <Avatar>
+                    <AvatarFallback>{getInitials(txn.name)}</AvatarFallback>
+                  </Avatar>
+                  {txn.name}
+                </TableCell>
+                <TableCell>₱ {txn.amount}</TableCell>
+                <TableCell>{txn.reference_id}</TableCell>
+                <TableCell>{txn.status.toUpperCase()}</TableCell>
+                <TableCell>{format(parseISO(txn.purchase_date), "MM-dd-yyyy HH:mm:ss")}</TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedData.length > 0 ? (
-                paginatedData.map((txn) => (
-                  <TableRow key={txn.id}>
-                    <TableCell>{txn.id}</TableCell>
-                    <TableCell>{txn.name}</TableCell>
-                    <TableCell>{txn.date}</TableCell>
-                    <TableCell>{txn.amount}</TableCell>
-                    <TableCell>{txn.status}</TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center p-4">
-                    No transactions found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-        {/* Pagination */}
-        <div className="mt-4 p-3 flex items-center justify-between">
-          <span>
-            Page {totalPages > 0 ? currentPage : 0} of {totalPages || 1}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              onClick={() =>
-                setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-              }
-              disabled={currentPage >= totalPages}
-            >
-              Next
-            </Button>
-          </div>
+      {/* Pagination */}
+      <div className="mt-4 p-3 flex items-center justify-between">
+        <span>Page {totalPages > 0 ? currentPage : 0} of {totalPages || 1}</span>
+        <div className="flex gap-2">
+          <Button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Previous</Button>
+          <Button onClick={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))} disabled={currentPage >= totalPages}>Next</Button>
         </div>
-        </>
+      </div>
+    </Card>
   );
 };
 

@@ -29,35 +29,39 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("transactions");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [merchant, setMerchant] = useState(null);
+
+
+  const fetchMerchantDetails = async () => {
+    try {
+      const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
   
-  const merchant_id = "a7d821a5-adc9-49bd-a6b7-8bccf606c886";
+      const response = await fetch(`http://${API_BASE_URL}/v1/merchant`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to fetch merchant details");
+      }
+  
+      const data = await response.json();
+      console.log(data);
+      setMerchant(data.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   useEffect(() => {
-    const fetchMerchantDetails = async () => {
-      try {
-        const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-        const response = await fetch(
-          `http://${API_BASE_URL}/v1/merchant/${merchant_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch merchant details");
-        }
-        const data = await response.json();
-        console.log(data);
-        console.log(data.data.merchant_id); // Corrected this line
-        setMerchant(data.data); // Set correct data
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
     fetchMerchantDetails();
-  }, [merchant_id]);
-  
+  }, []);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   
@@ -179,24 +183,15 @@ export default function Dashboard() {
                       <TooltipTrigger asChild>
                         <ShieldCheckIcon className="text-green-500 cursor-pointer" />
                       </TooltipTrigger>
-                      <TooltipContent>Member is activated</TooltipContent>
+                      <TooltipContent>Merchant is activated</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </h2>
 
-                <TooltipProvider>
                   <div className="flex items-center gap-2">
                     <p className="text-xs sm:text-sm text-gray-500">{merchant.member.full_name}</p>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Link to={`/dashboard/member/${merchant.member.member_id}`} className="text-gray-500 hover:text-gray-700">
-                          <ExternalLinkIcon className="w-4 h-4" />
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent>View Profile</TooltipContent>
-                    </Tooltip>
+
                   </div>
-                </TooltipProvider>
               </div>
             </div>
 

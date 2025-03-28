@@ -12,7 +12,15 @@ import DashboardHome from "@/app/dashboard/Home";
 import CommunityDetails from "@/app/dashboard/community/CommunityDetails";
 import MerchantProfile from "@/app/dashboard/merchant/MerchantProfile";
 
+import Accounts from "@/app/dashboard/Accounts";
+
+import Hub from "@/app/dashboard/hub/Hub";
+import Hub_profile from "@/app/dashboard/hub/Hub_profile";
+
+import Rewards from "@/app/dashboard/Rewards";
+
 import ErrorPage from "@/components/ErrorPage";
+import ActivationHistory from "@/app/dashboard/ActivationHistory";
 
 
 function DashboardRoutes() {
@@ -40,6 +48,14 @@ function DashboardRoutes() {
 
         <Route path="members" element={<Members/>} />
         <Route path="member/:user_id" element={<UserProfile/>} />
+
+        <Route path="hub" element={<Hub/>} />
+        <Route path="hub/:hub_id" element={<Hub_profile/>} />
+
+        <Route path="/rewards" element={<Rewards/>} />        
+        <Route path="/activation-history" element={<ActivationHistory/>} />
+
+        <Route path="accounts" element={<Accounts/>} />
         
       </Route>
     </Routes>

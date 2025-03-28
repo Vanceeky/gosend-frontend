@@ -13,7 +13,11 @@ import InvestorRoutes from "./routes/InvestorRoutes.jsx";
 
 import ErrorPage from "./components/ErrorPage";
 
+import CreateAccount from "./app/members/CreateAccount.jsx";
+
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
+import CustomerSupportRoutes from "./routes/CustomerSupportRoutes.jsx";
 
 import { Toaster  } from "sonner";
 
@@ -32,9 +36,11 @@ function App() {
           
           
           {/* Public Routes */}
-          <Route path="/v1/merchants/create/:referrer_id" element={<MerchantRegister />} /> /* CREATE MERCHANT */ /* CREATE MERCHANT */
+          <Route path="/register-merchant" element={<MerchantRegister />} /> /* CREATE MERCHANT */ /* CREATE MERCHANT */
 
-          <Route path="/v1/admin/:account_url/login" element={<LoginPage />} /> /* LOGIN ADMIN ACCOUNTS */ /* LOGIN ADMIN ACCOUNTS */
+          <Route path="/become-a-member/:referral_id" element={< CreateAccount/>}/>/* CREATE MEMBER */ /* CREATE MEMBER */
+
+          <Route path=":account_url/login" element={<LoginPage />} /> /* LOGIN ADMIN ACCOUNTS */ /* LOGIN ADMIN ACCOUNTS */
 
           <Route path="/login" element={<MemberLoginPage />} />
 
@@ -59,6 +65,10 @@ function App() {
 
                 <Route element={<ProtectedRoute allowedRoles={["INVESTOR"]} />}>
                     <Route path="/investor/*" element={<InvestorRoutes />} />
+                </Route>
+
+                <Route element={<ProtectedRoute allowedRoles={["CUSTOMER_SUPPORT"]} />}>
+                    <Route path="/customer-support/*" element={<CustomerSupportRoutes />} />
                 </Route>
 
 

@@ -14,7 +14,6 @@ const ContactUs = () => {
 
   const [messageStatus, setMessageStatus] = useState(null);
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -26,7 +25,6 @@ const ContactUs = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-
 
     // Simulate a successful form submission
     setMessageStatus('success');
@@ -71,7 +69,7 @@ const ContactUs = () => {
 
               <div className="flex items-center text-lg">
                 <MapPin className="mr-3 text-white" />
-                <p>Location: <span className="font-semibold">Philippines</span></p>
+                <p>Location: <span className="font-semibold">Unit 425 Cityland Shaw Tower, Mandaluyong</span></p>
               </div>
 
               {/* Facebook Button Styled Like Contact Info */}
@@ -194,7 +192,7 @@ const ContactUs = () => {
               </Collapsible.Trigger>
               <Collapsible.Content>
                 <p className="mt-2 text-gray-700 px-4 py-3 border-b-2 border-gray-300">
-                  If you need assistance, you can reach us through the contact form above, or you can email us directly at support@go-send.com.
+                  You can reach our customer support team by filling out the form above, or by emailing us directly at support@go-send.com.
                 </p>
               </Collapsible.Content>
             </Collapsible.Root>
@@ -208,7 +206,7 @@ const ContactUs = () => {
               </Collapsible.Trigger>
               <Collapsible.Content>
                 <p className="mt-2 text-gray-700 px-4 py-3 border-b-2 border-gray-300">
-                  We offer a wide range of services, including eCommerce solutions, affiliate marketing, and digital transactions. Please reach out for more details!
+                  We provide eCommerce solutions, digital transactions, affiliate marketing, and business growth tools. Get in touch for more info!
                 </p>
               </Collapsible.Content>
             </Collapsible.Root>
@@ -222,7 +220,21 @@ const ContactUs = () => {
               </Collapsible.Trigger>
               <Collapsible.Content>
                 <p className="mt-2 text-gray-700 px-4 py-3 border-b-2 border-gray-300">
-                  Our office is located at 5th Floor, Units D & E, 20 Lansbergh Condominium, Tomas Morato, South Triangle, Quezon City, Metro Manila, Philippines.
+                  Our office is located at <strong>Unit 425 Cityland Shaw Tower, Mandaluyong</strong>.
+                </p>
+              </Collapsible.Content>
+            </Collapsible.Root>
+
+            <Collapsible.Root className="w-full">
+              <Collapsible.Trigger 
+                className="text-xl font-semibold w-full text-left cursor-pointer px-4 py-3 border-b-2 border-gray-300 hover:bg-gray-300 focus:outline-none transition-all duration-300 ease-in-out text-gray-800 flex justify-between items-center"
+              >
+                What are your business hours?
+                <ChevronDown className="text-gray-800 transition-transform duration-300 ease-in-out transform" />
+              </Collapsible.Trigger>
+              <Collapsible.Content>
+                <p className="mt-2 text-gray-700 px-4 py-3 border-b-2 border-gray-300">
+                  Our business hours are from 9 AM to 5 PM, Monday to Friday. We are closed on weekends and public holidays.
                 </p>
               </Collapsible.Content>
             </Collapsible.Root>
@@ -234,4 +246,3 @@ const ContactUs = () => {
 };
 
 export default ContactUs;
-

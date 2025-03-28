@@ -28,7 +28,7 @@ export function LoginForm({ className, ...props }) {
   
     try {
       const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-      const response = await fetch(`http://${API_BASE_URL}:8000/v1/admin/${account_url}/login`, {
+      const response = await fetch(`http://${API_BASE_URL}/v1/admin/${account_url}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -40,17 +40,16 @@ export function LoginForm({ className, ...props }) {
       }
   
       const data = await response.json();
-      console.log("Login successful:", data);
   
       // Extract nested data
-      const userData = data.data; // Adjusting for the nested structure
+      const userData = data; // Adjusting for the nested structure
   
       if (!userData || !userData.access_token || !userData.account_type) {
         throw new Error("Invalid response from server.");
       }
   
       // Store token and account type
-      localStorage.setItem("token", userData.access_token);
+      localStorage.setItem("access_token", userData.access_token);
       localStorage.setItem("account_type", userData.account_type);
   
       toast.success("Login successful!");
@@ -63,6 +62,8 @@ export function LoginForm({ className, ...props }) {
         navigate("/customer-support");
       } else if (userData.account_type === "ADMIN") {
         navigate("/dashboard");
+      } else if (userData.account_type === "INVESTOR") {
+        navigate("/investor");
       } else {
         throw new Error("Invalid account type.");
       }

@@ -1,83 +1,53 @@
-"use client"
+"use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { useEffect, useState } from "react";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 
-const data = [
-  {
-    name: "Jan",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Aug",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dec",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-]
+const monthNames = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
 
-export function Overview() {
+export function Overview({ monthlyData }) {
+  const formattedData = monthNames.map((name, index) => {
+    const monthData = monthlyData?.find((item) => item.month === index + 1);
+    return {
+      name,
+      total: monthData ? monthData.total : 0, // Default to 0 if no data for that month
+    };
+  });
+  
+
   return (
     <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={data}>
-        <XAxis
-          dataKey="name"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value) => `$${value}`}
-        />
-        <Bar
-          dataKey="total"
-          fill="currentColor"
-          radius={[4, 4, 0, 0]}
-          className="fill-primary"
-        />
-      </BarChart>
-    </ResponsiveContainer>
-  )
+    <BarChart data={formattedData}>
+      <XAxis
+        dataKey="name"
+        stroke="#888888"
+        fontSize={12}
+        tickLine={false}
+        axisLine={false}
+      />
+      <YAxis
+        stroke="#888888"
+        fontSize={12}
+        tickLine={false}
+        axisLine={false}
+        tickFormatter={(value) => `₱${value}`}
+      />
+      <Tooltip 
+        cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
+        contentStyle={{ backgroundColor: "#fff", borderRadius: "8px", padding: "8px", border: "1px solid #ddd" }}
+        labelStyle={{ fontWeight: "bold" }}
+        formatter={(value) => [`₱${value}`, "Total Earnings"]} 
+      />
+      <Bar
+        dataKey="total"
+        fill="currentColor"
+        radius={[4, 4, 0, 0]}
+        className="fill-primary"
+      />
+    </BarChart>
+  </ResponsiveContainer>
+);
 }

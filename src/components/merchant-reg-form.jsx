@@ -7,17 +7,20 @@ import { Label } from "../components/ui/label";
 import LocationForm from "./Location.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Check, AlertTriangle } from "lucide-react";
+import {  AlertCircle, CheckCircle, AlertTriangle } from "lucide-react";
+
+  
+import Mapbox from "@/app/dashboard/merchant/components/Mapbox";
 
 export function MerchantRegisterForm({ setAlert, className, ...props }) {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const { referrer_id } = useParams(); 
+
 
   const nextStep = () => setCurrentStep(currentStep + 1);
   const prevStep = () => setCurrentStep(currentStep - 1);
 
-  const [location, setLocation] = useState({ latitude: null, longitude: null });
+  const [location, setLocation] = useState({ latitude: null, longitude: null});
 
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
@@ -33,14 +36,8 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
     street: '',
   });
 
-  // Handle input changes
-  const handleInputChange_ = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+    // Handle input changes
+
 
    // Handle input changes
    const handleInputChange = (e) => {
@@ -69,24 +66,10 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
   
   
 
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
-  }, []);
+  // Handle location change from Mapbox
+  const handleLocationChange = ([longitude, latitude]) => {
+    setLocation({ latitude, longitude });
+  };
 
   const validateStep = (step) => {
     switch (step) {
@@ -122,6 +105,8 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
 
 
 
+
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
   
@@ -137,7 +122,9 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
       !selectedBarangay ||
       !formData.street
     ) {
-      setAlert({ type: "error", message: "All fields are required." });
+      toast.error("All fields are required.", {
+        icon: <AlertCircle className="w-5 h-5 text-red-500" />,
+      });
       return;
     }
   
@@ -145,56 +132,51 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
       mobile_number: formData.mobileNumber,
       business_name: formData.businessName,
       business_type: formData.businessType,
-      discount: 0, // Default discount
-      status: true, // Default status
+      discount: 0,
+      status: true,
       business_email: formData.businessEmail,
-      merchant_details: {
-        latitude: location.latitude.toString(),
-        longitude: location.longitude.toString(),
-        contact_number: formData.mobileNumber,
-        business_email: formData.businessEmail,
-        region: selectedRegion?.name || "",
-        province: selectedProvince?.name || "",
-        municipality_city: selectedCity?.name || "",
-        barangay: selectedBarangay?.name || "",
-        street: formData.street,
-      },
+      latitude: String(location.latitude),
+      longitude: String(location.longitude),
+    
+      contact_number: formData.mobileNumber,
+      region: selectedRegion?.name || "",
+      province: selectedProvince?.name || "",
+      municipality_city: selectedCity?.name || "",
+      barangay: selectedBarangay?.name || "",
+      street: formData.street,
     };
   
     console.log('Payload:', payload);
-
+  
     try {
-      
       const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-      const url = `http://${API_BASE_URL}/v1/merchant/create/${referrer_id}?referral_id=${referrer_id}`;
+      const BIG_BOSS_ID = import.meta.env.VITE_BIG_BOSS_ID;
+      const url = `http://${API_BASE_URL}/v1/merchant/create/${BIG_BOSS_ID}`;
+      
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
   
+      const result = await response.json();
+  
       if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error response:", errorResponse);
-  
-        toast.error(errorResponse.message || "Something went wrong. Please try again.", {
-          icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
+        console.error("Error response:", result);
+        toast.error(result.message, {
+          icon: <AlertCircle className="w-5 h-5 text-red-500" />,
         });
-  
-        throw new Error("Network response was not ok");
+              // Reset form and redirect to step 1
+      setCurrentStep(1); 
+      return
       }
   
-      const result = await response.json();
-      console.log("Merchant created successfully:", result);
-  
-      // ✅ Show success toast & keep user on page
-      toast.success("Merchant Created Successfully!", {
-        icon: <Check className="w-5 h-5 text-green-500" />,
+      toast.success(result.message, {
+        icon: <CheckCircle className="w-5 h-5 text-green-500" />,
       });
   
-      // Optional: Reset form after success
+      // Reset form and redirect to step 1
+      setCurrentStep(1); 
       setFormData({
         mobileNumber: "",
         businessName: "",
@@ -206,19 +188,15 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
       setSelectedProvince(null);
       setSelectedCity(null);
       setSelectedBarangay(null);
+      setLocation({ latitude: null, longitude: null });
   
     } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-  
       toast.error(error.message || "An error occurred. Please try again.", {
-        icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
+        icon: <AlertTriangle className="w-5 h-5 text-yellow-500" />,
       });
     }
-  
-
-
   };
-
+  
 
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
@@ -323,9 +301,9 @@ export function MerchantRegisterForm({ setAlert, className, ...props }) {
       {currentStep === 3 && (
         <div className="grid gap-6">
           <div>
-            <p>Latitude: {location.latitude || "Fetching..."}</p>
-            <p>Longitude: {location.longitude || "Fetching..."}</p>
+            <Mapbox onLocationChange={handleLocationChange} />
           </div>
+
           <div className="flex justify-between">
             <Button onClick={prevStep} className="w-full me-2">Back</Button>
             <Button type="submit" className="w-full">Submit</Button>

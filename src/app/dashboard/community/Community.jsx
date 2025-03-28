@@ -32,6 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import AddCommunityDialog from "@/components/AddCommunityDialog";
 import { useNavigate } from "react-router-dom";
 
+import Cookies from "js-cookie"
 
 
 export default function Community() {
@@ -42,11 +43,16 @@ export default function Community() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const accountType = Cookies.get("account_type");
   // Fetch Data from API
   const fetchCommunities = async () => {
     try {
       const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-      const response = await fetch(`http://${API_BASE_URL}/v1/community/all`);
+      const response = await fetch(`http://${API_BASE_URL}/v1/community/all`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
       const result = await response.json();
   
       if (result.status === "success") {
@@ -95,8 +101,10 @@ export default function Community() {
           className="w-80"
         />
 
-        {/* Add Community Dialog */}
+        {accountType == "ADMIN" && (
+          
         <AddCommunityDialog onCommunityAdded={() => fetchCommunities()} />
+        )}
 
       </div>
 
@@ -120,26 +128,51 @@ export default function Community() {
                   <TableCell>{item.leader}</TableCell>
                   <TableCell>{item.members}</TableCell>
                   <TableCell>{item.points}</TableCell>
-                  <TableCell className="text-right">
-                  <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            navigate(`/dashboard/community/${item.id}`)
-                          }
-                        >
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+                  
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {accountType == "ADMIN" && (
+                            <DropdownMenuItem
+                            onClick={() =>
+                              navigate(`/dashboard/community/${item.id}`)
+                            }
+                          >
+
+                          
+                            View Details
+                          </DropdownMenuItem>
+                          )}
+
+                          {accountType == "CUSTOMER_SUPPORT" && (
+                            <DropdownMenuItem
+                            onClick={() =>
+                              navigate(`/customer-support/community/${item.id}`)
+                            }
+                          >
+                          
+                            View Details
+                          </DropdownMenuItem>
+                          )}  
+
+                          {accountType == "INVESTOR" && (
+                            <DropdownMenuItem
+                            onClick={() =>
+                              navigate(`/investor/community/${item.id}`)
+                            }
+                          >
+                            View Details
+                          </DropdownMenuItem>
+                          )}
+
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
                 </TableRow>
               ))
             ) : (

@@ -29,32 +29,83 @@ export default function UserProfile() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("transactions");
   const { user_id } = useParams();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-        const response = await fetch(
 
-          `http://${API_BASE_URL}:8000/v1/users/info/${user_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch user details");
-        }
-        const data = await response.json();
-        setUser(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+
+const [user, setUser] = useState(() => {
+  const cachedData = sessionStorage.getItem(`user-${user_id}`);
+  return cachedData ? JSON.parse(cachedData) : null;
+});
+
+const [error, setError] = useState(null);
+const [loading, setLoading] = useState(!user);
+
+useEffect(() => {
+  if (!user_id) {
+    console.error("User ID is missing");
+    setError("User ID is missing");
+    setLoading(false);
+    return;
+  }
+
+  const cachedData = sessionStorage.getItem(`user-${user_id}`);
+  if (cachedData) {
+    console.log("Using cached data");
+    setUser(JSON.parse(cachedData));
+    setLoading(false);
+    return;
+  }
+
+  const controller = new AbortController();
+  const { signal } = controller;
+
+  const fetchUserInfo = async () => {
+    try {
+      const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
+      const url = `http://${API_BASE_URL}/v1/member/${user_id}/info`;
+      console.log("Fetching from:", url);
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        signal,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error ${response.status}`);
       }
-    };
 
-    fetchUserInfo();
-  }, [user_id]);
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      if (data.status !== "success") {
+        throw new Error(data.message || "Failed to fetch user details");
+      }
+
+      setUser(data.data);
+      sessionStorage.setItem(`user-${user_id}`, JSON.stringify(data.data)); // Cache the data
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        console.log("Fetch aborted");
+      } else {
+        console.error("Fetch error:", err);
+        setError(err.message || "Failed to fetch user details. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchUserInfo();
+
+  return () => {
+    controller.abort();
+  };
+}, [user_id]);
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -66,15 +117,15 @@ export default function UserProfile() {
         {user && (
           <div className="w-full flex gap-4">
             {/* User Info & Tabs Card (8/12) */}
-            <Card className="w-full md:w-8/12 flex flex-col">
+            <Card className="w-full  flex flex-col">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
                 <CardHeader className="">
                   
                   <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
                     <Avatar className="w-12 h-12 sm:w-16 sm:h-16">
                       <AvatarFallback>    
-                        {user.first_name?.charAt(0).toUpperCase()}
-                        {user.last_name?.charAt(0).toUpperCase()}
+                        {user.details.first_name?.charAt(0).toUpperCase()}
+                        {user.details.last_name?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
@@ -86,7 +137,7 @@ export default function UserProfile() {
 
                         <Dialog>
                           <DialogTrigger asChild>
-                            <span className="capitalize">{user.first_name} {user.middle_name} {user.last_name} {user.suffix_name}</span>
+                            <span className="capitalize text-sm">{user.details.first_name} {user.details.middle_name} {user.details.last_name} {user.details.suffix_name}</span>
                           </DialogTrigger>
                           <DialogContent className="w-full mx-auto px-4 sm:px-6 rounded-lg"> {/* Fixed width */}
                             <DialogHeader>
@@ -112,7 +163,7 @@ export default function UserProfile() {
                                             <Wallet className="h-4 w-4 text-muted-foreground" />
                                           </CardHeader>
                                           <CardContent className="p-0">
-                                            <div className="text-2xl font-bold">₱ {user.wallet_balance}</div>
+                                            <div className="text-2xl font-bold">₱ {user.wallet.wallet_balance}</div>
                                           </CardContent>
                                         </Card>
 
@@ -123,7 +174,7 @@ export default function UserProfile() {
                                             <WalletMinimal className="h-4 w-4 text-muted-foreground" />
                                           </CardHeader>
                                           <CardContent className="p-0">
-                                            <div className="text-2xl font-bold">{user.reward_points}</div>
+                                            <div className="text-2xl font-bold">{user.wallet.reward_points}</div>
                                           </CardContent>
                                         </Card>
                                       </div>
@@ -136,7 +187,7 @@ export default function UserProfile() {
                                           User ID
                                         </Label>
                                         <div className="flex items-center gap-2">
-                                          <Input id="user-id" value={user.user_id} readOnly className="w-full cursor-pointer" />
+                                          <Input id="user-id" value={user.member_id} readOnly className="w-full cursor-pointer" />
                                           <Button type="button" size="sm" className="px-3">
                                             <span className="sr-only">Copy</span>
                                             <Copy className="w-4 h-4" />
@@ -196,7 +247,7 @@ export default function UserProfile() {
                                             id="house-number"
                                             type="text"
                                             readOnly
-                                            value={user.house_number}
+                                            value={user.address.house_number}
                                             className="w-full cursor-pointer"
                                           />
                                         </div>
@@ -206,7 +257,7 @@ export default function UserProfile() {
                                             id="street-name"
                                             type="text"
                                             readOnly
-                                            value={user.street_name}
+                                            value={user.address.street_name}
                                             className="w-full cursor-pointer"
                                           />
                                         </div>
@@ -215,25 +266,25 @@ export default function UserProfile() {
                                       {/* Barangay */}
                                       <div className="space-y-1">
                                         <Label htmlFor="current">Barangay</Label>
-                                        <Input id="current" value={user.barangay} readOnly type="text" />
+                                        <Input id="current" value={user.address.barangay} readOnly type="text" />
                                       </div>
 
                                       {/* City / Municipality */}
                                       <div className="space-y-1">
                                         <Label htmlFor="new">City / Municipality</Label>
-                                        <Input id="new" value={user.city} readOnly type="text" />
+                                        <Input id="new" value={user.address.city} readOnly type="text" />
                                       </div>
 
                                       {/* Province */}
                                       <div className="space-y-1">
                                         <Label htmlFor="current">Province</Label>
-                                        <Input id="current" value={user.province} readOnly type="text" />
+                                        <Input id="current" value={user.address.province} readOnly type="text" />
                                       </div>
 
                                       {/* Region */}
                                       <div className="space-y-1">
                                         <Label htmlFor="new">Region</Label>
-                                        <Input id="new" value={user.region} readOnly type="text" />
+                                        <Input id="new" value={user.address.region} readOnly type="text" />
                                       </div>
                                     </CardContent>
                                   </Card>
@@ -365,32 +416,6 @@ export default function UserProfile() {
                   </TabsContent>
                 </CardContent>
               </Tabs>
-            </Card>
-
-            {/* Referred Users - Sheet for small screens */}
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetContent side="right" className="w-100">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Referred Users</CardTitle>
-                    <CardDescription>List of users you have referred.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-
-                  </CardContent>
-                </Card>
-              </SheetContent>
-            </Sheet>
-
-            {/* Referred Users Card for large screens */}
-            <Card className="hidden md:flex w-4/12 flex-col">
-              <CardHeader>
-                <CardTitle>Referred Users</CardTitle>
-                <CardDescription>List of users you have referred.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ReferredUsers/>
-              </CardContent>
             </Card>
 
           </div>

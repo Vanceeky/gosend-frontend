@@ -8,6 +8,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const closeMobileMenu = () => setIsOpen(false);
+  const BIG_BOSS_ID = import.meta.env.VITE_BIG_BOSS_ID;
 
   return (
     <nav className="bg-white border-b shadow-sm">
@@ -40,7 +41,9 @@ export function Navbar() {
               <Link to="/login">Login</Link>
             </Button>
             <Button asChild className="bg-orange-500 hover:bg-orange-600 transition">
-              <Link to="/signup">Become a Member!</Link>
+
+              <Link to={`/become-a-member/${BIG_BOSS_ID}`}>Become a Member!</Link>
+
             </Button>
           </div>
 

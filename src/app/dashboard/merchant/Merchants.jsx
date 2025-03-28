@@ -23,7 +23,13 @@ const Merchants = () => {
     const fetchMerchants = async () => {
       try {
         const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-        const response = await fetch(`http://${API_BASE_URL}/v1/merchants/`);
+        const response = await fetch(`http://${API_BASE_URL}/v1/merchants/`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) throw new Error("Failed to fetch merchants");
 
         const result = await response.json();
@@ -64,6 +70,8 @@ const Merchants = () => {
   
   return (
     <Card className="p-6 space-y-4 shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Merchants</h2>
+
       <div className="flex flex-wrap items-center gap-4">
         {/* Search Input */}
         <Input

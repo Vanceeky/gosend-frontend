@@ -9,8 +9,18 @@ import {
   UserRoundPenIcon,
   Users,
   Wallet,
-  StoreIcon,
-  Users2,
+  Wrench,
+  Home,
+  User,
+  Gauge,
+  CreditCard,
+  UsersRound,
+  Store,
+  Building,
+  PlaneIcon,
+  Coins,
+  BadgeCheck,
+  Globe,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -32,20 +42,11 @@ const menuConfig = {
   MEMBER: {
     navMain: [
       {
-        title: "Dashboard",
+        title: "Home",
         url: "/member",
-        icon: LayoutDashboard,
+        icon: Home,
       },
-      {
-        title: "Transactions",
-        url: "/member/transactions",
-        icon: ReceiptTextIcon,
-      },
-      {
-        title: "Profile",
-        url: "/member/profile",
-        icon: UserRoundPenIcon,
-      },
+
     ],
     navSecondary: [],
     projects: [],
@@ -75,16 +76,17 @@ const menuConfig = {
     navMain: [
       {
         title: "Members",
-        url: "/dashboard/members",
+        url: "/community/members",
         icon: Users,
+        isActive: true,
         items: [
           {
             title: "Activated Members",
-            url: "/dashboard/activated-members",
+            url: "/community/activated-members",
           },
           {
             title: "Inactive Accounts",
-            url: "/dashboard/inactive-accounts",
+            url: "/community/inactive-accounts",
           },
         ],
       },
@@ -102,17 +104,34 @@ const menuConfig = {
       {
         title: "Members",
         url: "/investor/members",
-        icon: ReceiptTextIcon,
+        icon: UsersRound,
+        isActive: true,
+        items: [
+          {
+            
+            title: "Activated Members",
+            url: "/investor/activated-members",
+          },
+          {
+            title: "Inactive Accounts",
+            url: "/investor/inactive-accounts",
+          },
+        ],
+      },
+      {
+        title: "Merchants",
+        url: "/investor/merchants",
+        icon: Store,
       },
       {
         title: "Community",
         url: "/investor/community",
-        icon: UserRoundPenIcon,
+        icon: Globe,
       },
       {
         title: "Rewards",
         url: "/investor/rewards",
-        icon: UserRoundPenIcon,
+        icon: Wallet,
       },
     ],
     navSecondary: [],
@@ -123,63 +142,114 @@ const menuConfig = {
       {
         title: "Dashboard",
         url: "/dashboard",
-        icon: LayoutDashboard,
+        icon: Gauge, // Better icon for an overview/dashboard
       },
       {
-        title: "MotherWallet",
+        title: "Mother Wallet",
         url: "/dashboard/motherwallet",
-        icon: Wallet,
+        icon: CreditCard, // Represents financial transactions more clearly
       },
       {
-        title: "Members",
+        title: "User Management", // More descriptive than "Platform"
         url: "/dashboard/members",
-        icon: Users,
+        icon: UsersRound, // Better for user-related management
         isActive: true,
         items: [
           {
-            
-            title: "Activated Members",
-            url: "/dashboard/activated-members",
+            title: "Members",
+            url: "/dashboard/members",
+            icon: <User/>, // Individual user icon
           },
           {
-            title: "Inactive Accounts",
-            url: "/dashboard/inactive-accounts",
+            title: "Merchants",
+            url: "/dashboard/merchants",
+            icon: Store, // Represents businesses more accurately
+          },
+          {
+            title: "Community",
+            url: "/dashboard/community",
+            icon: Users, // Represents groups of people
+          },
+          {
+            title: "Hub",
+            url: "/dashboard/hub",
+            icon: Building, // Represents an organization or hub
           },
         ],
       },
       {
-        title: "Merchants",
-        url: "/dashboard/merchants",
-        icon: StoreIcon,
+        title: "Activation History",
+        url: "/dashboard/activation-history",
+        icon: BadgeCheck
       },
       {
-        title: "Community",
-        url: "/dashboard/community",
-        icon: Users2,
-      },
-      {
-        title: "Travel",
-        url: "#",
-        icon: Map,
-      },
-
+        title: "Rewards",
+        url: "/dashboard/rewards",
+        icon: Coins
+      }
     ],
+  
     navSecondary: [
       {
-        title: "MotherWallet",
-        url: "/dashboard/motherwallet",
-        icon: Wallet,
+        title: "Accounts",
+        url: "/dashboard/accounts",
+        icon: Wrench,
       },
     ],
     projects: [
       
     ],
   },
+  CUSTOMER_SUPPORT: {
+    navMain: [
+      {
+        title: "Home",
+        url: "/customer-support",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Members",
+        url: "/customer-support/members",
+        icon: ReceiptTextIcon,
+        isActive: true,
+        items: [
+          {
+            
+            title: "Activated Members",
+            url: "/customer-support/activated-members",
+          },
+          {
+            title: "Inactive Accounts",
+            url: "/customer-support/inactive-accounts",
+          },
+        ],
+      },
+      {
+        title: "Merchants",
+        url: "/customer-support/merchants",
+        icon: UserRoundPenIcon,
+      },
+      {
+        title: "Community",
+        url: "/customer-support/community",
+        icon: UserRoundPenIcon,
+      },
+      {
+        title: "Rewards",
+        url: "/customer-support/rewards",
+        icon: UserRoundPenIcon,
+      },
+    ],
+    navSecondary: [],
+    projects: [],
+  },
+
+
 };
 
 export function AppSidebar({ ...props }) {
   
-  const userRole = localStorage.getItem("user_role") || "MEMBER";
+  const userRole = localStorage.getItem("account_type") || "MEMBER";
   const menuData = menuConfig[userRole] || menuConfig.MEMBER;
 
   return (
@@ -209,7 +279,7 @@ export function AppSidebar({ ...props }) {
         <NavProjects projects={menuData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={{ name: "Ivan Sari Sari Store", email: "9456656707", avatar: "/avatars/shadcn.jpg" }} />
+        <NavUser user={{ name: "GoSend", email: "9456656707"}} />
       </SidebarFooter>
     </Sidebar>
   );

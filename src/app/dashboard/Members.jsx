@@ -10,7 +10,7 @@ export default function Members() {
     const fetchMembers = async () => {
       try {
         const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
-        const response = await fetch(`http://${API_BASE_URL}/v1/members/all`);
+        const response = await fetch(`http://${API_BASE_URL}/v1/member/all`);
         if (!response.ok) {
           throw new Error("Failed to fetch members");
         }
@@ -35,6 +35,7 @@ export default function Members() {
             wallet_balance: member.wallet.wallet_balance,
             reward_points: member.wallet.reward_points,
             account_type: member.account_type || "MEMBER",
+            community_id: member.community_id,
             community_name: member.community_name || "N/A",
             address: `${member.user_address.house_number} ${member.user_address.street_name}, ${member.user_address.city}`,
             is_kyc_verified: member.is_kyc_verified,
@@ -53,12 +54,12 @@ export default function Members() {
     fetchMembers();
   }, []);
 
-  const handleActivationUpdate = (userId, newBalance) => {
-    console.log("Updating user:", userId, "with new balance:", newBalance); // Debugging
+  const handleActivationUpdate = (userId) => {
+    console.log("Updating user:", userId); // Debugging
     setData((prevData) =>
       prevData.map((user) =>
-        user.user_id === userId
-          ? { ...user, is_activated: true, wallet_balance: newBalance }
+        user.id === userId
+          ? { ...user, is_activated: true }
           : user
       )
     );
@@ -68,10 +69,8 @@ export default function Members() {
   if (error) return <p className="text-red-500">Error: {error}</p>;
   
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Members List</h2>
-      
+
       <MembersDataTable data={data} setData={setData} onActivate={handleActivationUpdate} />
-    </div>
+   
   );
 }

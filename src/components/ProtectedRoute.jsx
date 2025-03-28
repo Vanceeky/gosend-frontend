@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 const ProtectedRoute = ({ allowedRoles }) => {
     const accessToken = localStorage.getItem("access_token");
-    const userRole = localStorage.getItem("user_role"); // Store role in localStorage upon login
+    const userRole = localStorage.getItem("account_type"); // Store role in localStorage upon login
     const location = useLocation();
 
     if (!accessToken) {
@@ -11,7 +11,6 @@ const ProtectedRoute = ({ allowedRoles }) => {
     }
 
     if (!allowedRoles.includes(userRole)) {
-        // Redirect to a "Not Authorized" page if role doesn't match
         return <ErrorPage />;
     }
 

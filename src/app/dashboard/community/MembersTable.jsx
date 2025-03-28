@@ -8,11 +8,15 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const MembersTable = ({ members }) => {
+import ConfirmActivation from '@/components/ConfirmActivation';
+import Cookies  from 'js-cookie';
+const MembersTable = ({ members, onActivate }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [kycStatus, setKycStatus] = useState('all');
   const [activationStatus, setActivationStatus] = useState('all');
+  const [membersList, setMembersList] = useState(members);
+
+  const accountType = Cookies.get("account_type")
 
   const getAvatarFallback = (firstName, lastName) => {
     return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
@@ -30,7 +34,16 @@ const MembersTable = ({ members }) => {
     setActivationStatus(value);
   };
 
-  const filteredMembers = members.filter((member) => {
+  const handleActivateSuccess = (userId) => {
+    setMembersList((prevMembers) =>
+      prevMembers.map((member) =>
+        member.user_id === userId ? { ...member, is_activated: true } : member
+      )
+    );
+  };
+  
+
+  const filteredMembers = membersList.filter((member) => {
     const matchesSearchTerm = member.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                              member.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                              member.mobile_number.includes(searchTerm);
@@ -88,7 +101,7 @@ const MembersTable = ({ members }) => {
                   <TableHead>Mobile Number</TableHead>
                   <TableHead>KYC Status</TableHead>
                   <TableHead>Activation Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               
@@ -110,34 +123,53 @@ const MembersTable = ({ members }) => {
                     <TableCell>{member.is_activated ? "✅ Yes" : "❌ No"}</TableCell>
                     
                     {/* Actions Dropdown */}
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    { (accountType == "ADMIN" || accountType == "LEADER") && (
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                          {/* Activate Account if not activated */}
-                          {!member.is_activated && (
+                            {/* Activate Account if not activated */}
+                            {!member.is_activated && (
+                              <DropdownMenuItem asChild>
+                                
+                                <ConfirmActivation
+                                  title="Activate Account?"
+                                  description=""
+                                  onConfirm={() => onActivate(member.user_id)}
+                                  triggerText="Activate Account"
+                                  user={{
+                                    id: member.user_id,
+                                    name: `${member.first_name} ${member.middle_name || ''} ${member.last_name} ${member.suffix_name || ''}`.trim(),
+                                    mobile_number: member.mobile_number,
+                                  }}
+                                  onActivateSuccess={handleActivateSuccess}
+                                />
+
+                              </DropdownMenuItem>
+                            )}
+
+                            <DropdownMenuSeparator />
+                            
+                            {/* View Details */}
                             <DropdownMenuItem>
-                              Activate Account
+                              <Link to={`/dashboard/member/${member.user_id}`} className="w-full">
+                                View Details
+                              </Link>
                             </DropdownMenuItem>
-                          )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    )}
 
-                          <DropdownMenuSeparator />
-                          
-                          {/* View Details */}
-                          <DropdownMenuItem>
-                            <Link to={`/dashboard/member/${member.user_id}`} className="w-full">
-                              View Details
-                            </Link>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+
+
+
                   </TableRow>
                 ))}
               </TableBody>  

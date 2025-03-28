@@ -8,6 +8,8 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { Circle } from "lucide-react"; // For the circular progress indicator
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
+
 
 import { toast } from "sonner";
 
@@ -23,7 +25,8 @@ export function LoginForm({ className, ...props }) {
   const [otpToken, setOtpToken] = useState(""); // Store OTP token from API
   const [isLoading, setIsLoading] = useState(false); // Loading state for API calls
   const [error, setError] = useState(""); // Error message
-
+  const navigate = useNavigate();
+  
   const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
 
 
@@ -59,9 +62,9 @@ const handleMobileSubmit = async (e) => {
     }
 
     const data = await response.json();
-    const { otp_token, otp } = data;
+    const { otp } = data;
 
-    setOtpToken(otp_token);
+    setOtpToken(otp);
     setExpiredAt(new Date(Date.now() + 120 * 1000));
     setTimeLeft(120);
     setIsResendDisabled(true);
@@ -98,12 +101,12 @@ const handleOtpSubmit = async (e) => {
   try {
     const url = new URL(`http://${API_BASE_URL}/v1/auth/verify-otp`);
     url.searchParams.append("mobile_number", mobile);
-    url.searchParams.append("otp_token", otpToken);
     url.searchParams.append("input_otp", otp);
 
     const response = await fetch(url, {
       method: "POST",
       headers: { accept: "application/json" },
+      credentials: "include", // Important for cookies to work
     });
 
     if (!response.ok) {
@@ -112,10 +115,10 @@ const handleOtpSubmit = async (e) => {
     }
 
     const data = await response.json();
+    console.log("OTP Response", data)
 
-    if (data.message === "OTP verified successfully") {
+    if (data.status === "success") {
       setStep("mpin");
-
       toast("OTP Verified", {
         description: "Your OTP was successfully verified. Please enter your MPIN.",
       });
@@ -131,89 +134,77 @@ const handleOtpSubmit = async (e) => {
   }
 };
 
+const handleMpinSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleMobileSubmit_main = async (e) => {
-    e.preventDefault();
-    if (mobile.length === 10 && accountType) {
-      setIsLoading(true);
-      setError("");
-      try {
-        // Construct the URL with query parameters
-        const url = new URL(`http://${API_BASE_URL}/v1/auth/login`);
-        url.searchParams.append("mobile_number", mobile);
-        url.searchParams.append("role", accountType.toUpperCase());
-  
-        console.log("Request URL:", url.toString()); // Log the full URL
-  
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "accept": "application/json", // Add the accept header
-          },
-        });
-  
-        if (!response.ok) {
-          const errorData = await response.json(); // Parse the error response
-          console.error("Error response:", errorData);
-          throw new Error(errorData.message || "Failed to send OTP");
-        }
-  
-        const data = await response.json();
-        const { otp_token, otp, message } = data;
-        setOtpToken(otp_token); // Store OTP token
-        setExpiredAt(new Date(Date.now() + 120 * 1000)); // Set expiration time
-        setTimeLeft(120); // Reset timer to 2 minutes
-        setIsResendDisabled(true); // Disable resend button
-        setStep("otp"); // Move to OTP step
-      } catch (err) {
-        setError(err.message || "Failed to send OTP. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
+  if (mpin.length !== 4) {
+    toast({
+      title: "Error",
+      description: "MPIN must be 4 digits.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const url = new URL(`http://${API_BASE_URL}/v1/auth/verify-mpin`);
+    url.searchParams.append("mobile_number", mobile);
+    url.searchParams.append("input_mpin", mpin);
+    url.searchParams.append("role", accountType.toUpperCase());
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+      },
+      credentials: "include", // ✅ Allow cookies to be sent and received
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Failed to verify MPIN");
     }
-  };
 
-  const handleOtpSubmit_main = async (e) => {
-    e.preventDefault();
-    if (otp.length === 6) {
-      setIsLoading(true);
-      setError("");
-      try {
-        // Construct the URL with query parameters
-        const url = new URL(`http://${API_BASE_URL}/v1/auth/verify-otp`);
-        url.searchParams.append("mobile_number", mobile);
-        url.searchParams.append("otp_token", otpToken);
-        url.searchParams.append("input_otp", otp);
-  
-        console.log("Request URL:", url.toString()); // Log the full URL
-  
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "accept": "application/json", // Add the accept header
-          },
-        });
-  
-        if (!response.ok) {
-          const errorData = await response.json(); // Parse the error response
-          console.error("Error response:", errorData);
-          throw new Error(errorData.message || "Failed to verify OTP");
-        }
-  
-        const data = await response.json();
-        if (data.message === "OTP verified successfully") {
-          setStep("mpin"); // Move to MPIN step
-        }
-      } catch (err) {
-        setError(err.message || "Failed to verify OTP. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
+    const data = await response.json();
+    // ✅ Save token & role in localStorage
+    if (data.access_token) {
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("account_type", data.account_type);
     }
-  };
+    
+
+    // ✅ Check for cookies (they will be set automatically by the browser)
+    toast("Success", {
+      title: "Success",
+      description: "Login successful! Redirecting...",
+    });
 
 
-  const handleMpinSubmit = async (e) => {
+    // ✅ Redirect based on role
+    setTimeout(() => {
+      if (data.account_type === "MEMBER") {
+        navigate("/member");
+      } else if (data.account_type === "LEADER") {
+        navigate("/community");
+      } else if (data.account_type === "MERCHANT") {
+        navigate("/merchant", {replace: true});
+      }
+    }, 100);
+
+  } catch (err) {
+    toast("Error", {
+      description: err.message || "Failed to verify MPIN. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  const handleMpinSubmit_copy_main_working = async (e) => {
     e.preventDefault();
   
     if (mpin.length !== 4) {
@@ -251,25 +242,25 @@ const handleOtpSubmit = async (e) => {
       // ✅ Save token & role in localStorage
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("user_role", data.role);
+        localStorage.setItem("user_role", data.account_type);
       }
   
       // ✅ Show success message
-      toast({
+      toast("Success", {
         title: "Success",
         description: "Login successful! Redirecting...",
       });
   
       // ✅ Redirect based on role
       setTimeout(() => {
-        if (data.role === "MEMBER") {
+        if (data.account_type === "MEMBER") {
           window.location.href = "/member";
-        } else if (data.role === "ADMIN") {
+        } else if (data.account_type === "ADMIN") {
           window.location.href = "/dashboard";
-        } else if (data.role === "MERCHANT") {
+        } else if (data.account_type === "MERCHANT") {
           window.location.href = "/merchant";
         }
-      }, 1500); // Delay redirection to show the toast
+      }, 500); // Delay redirection to show the toast
   
     } catch (err) {
       toast("Error", {
@@ -423,7 +414,7 @@ const handleOtpSubmit = async (e) => {
               <SelectContent>
                 <SelectItem value="MEMBER">Member</SelectItem>
                 <SelectItem value="MERCHANT">Merchant</SelectItem>
-                <SelectItem value="community_leader">Community Leader</SelectItem>
+                <SelectItem value="LEADER">Community Leader</SelectItem>
               </SelectContent>
             </Select>
 

@@ -37,7 +37,13 @@ export default function CommunityDetails() {
       try {
         const API_BASE_URL = import.meta.env.VITE_LOCALHOST_IP;
         const response = await fetch(
-          `http://${API_BASE_URL}/v1/community/${community_id}`
+          `http://${API_BASE_URL}/v1/community/${community_id}`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch community details");
