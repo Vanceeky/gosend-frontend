@@ -14,6 +14,9 @@ import Merchant_details from "@/app/investor/Merchant_details";
 import ActivatedMembers from "@/app/investor/ActivatedMembers";
 import InactiveMembers from "@/app/investor/InactiveMembers";
 
+
+import ActivationHistory from "@/app/investor/ActivationHistory";
+
 import ErrorPage from "@/components/ErrorPage";
 
 
@@ -36,6 +39,7 @@ function InvestorRoutes() {
                 <Route path="community/:community_id/" element={<Community_details />} />
 
                 <Route path="rewards/" element={<Rewards />} />
+                <Route path="activation-history/" element={<ActivationHistory/>} />
 
                 <Route path="merchants/" element={<MerchantsPage/>} />
                 <Route path="merchants/:merchant_id" element={<Merchant_details />} />

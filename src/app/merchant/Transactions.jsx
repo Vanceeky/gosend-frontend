@@ -19,6 +19,7 @@ const Transactions = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -106,7 +107,7 @@ const Transactions = () => {
 
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className={cn("w-full md:w-[250px] justify-start text-left font-normal", !dateRange.from && !dateRange.to && "text-muted-foreground")}>              
+            <Button variant="outline" className={cn("w-full md:w-[300px] justify-start text-left font-normal", !dateRange.from && !dateRange.to && "text-muted-foreground")}>              
               <CalendarIcon className="mr-2 h-4 w-4" />
               {dateRange.from && dateRange.to ? `${format(dateRange.from, "PPP")} - ${format(dateRange.to, "PPP")}` : "Pick a date range"}
             </Button>
@@ -125,17 +126,6 @@ const Transactions = () => {
           <TooltipContent>Clear Date Range</TooltipContent>
         </Tooltip>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">{statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setStatusFilter("completed")}>Completed</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter("pending")}>Pending</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter("failed")}>Failed</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter("")}>Clear Filter</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       <div className="overflow-auto h-[63vh] border rounded-lg">

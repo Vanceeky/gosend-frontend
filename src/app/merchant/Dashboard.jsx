@@ -24,6 +24,7 @@ import  TransactionsTable from "./Transactions"
 import Rewards from "./Rewards";
 
 import { QrCode } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("transactions");
@@ -139,7 +140,11 @@ export default function Dashboard() {
                                     <CardTitle>Merchant QR Code</CardTitle>
                                   </CardHeader>
                                   <CardContent className="flex justify-center">
-                                    <QrCode size={100} className="text-gray-500" />
+
+                                  <QRCodeCanvas
+                                      value={`http://localhost:5173/pay-qr/merchant/`} // Dynamic merchant URL
+                                      size={150}
+                                    />
                                   </CardContent>
                                 </Card>
                               </CardContent>

@@ -11,7 +11,8 @@ export function Navbar() {
   const BIG_BOSS_ID = import.meta.env.VITE_BIG_BOSS_ID;
 
   return (
-    <nav className="bg-white border-b shadow-sm">
+    <nav className="bg-white border-b shadow-sm fixed top-0 left-0 w-full z-50">
+
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

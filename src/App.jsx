@@ -19,7 +19,12 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 import CustomerSupportRoutes from "./routes/CustomerSupportRoutes.jsx";
 
+
+import HubRoutes from "./routes/HubRoutes.jsx";
+
 import { Toaster  } from "sonner";
+
+import PayQR from "./app/merchant/PayQR.jsx";
 
 
 function App() {
@@ -45,32 +50,38 @@ function App() {
           <Route path="/login" element={<MemberLoginPage />} />
 
 
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-                    <Route path="/dashboard/*" element={<DashboardRoutes />} />
-                </Route>
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+              <Route path="/dashboard/*" element={<DashboardRoutes />} />
+          </Route>
 
-                <Route element={<ProtectedRoute allowedRoles={["LEADER"]} />}>
-                    <Route path="/community/*" element={<CommunityRoutes />} />
-                </Route>
+          <Route element={<ProtectedRoute allowedRoles={["LEADER"]} />}>
+              <Route path="/community/*" element={<CommunityRoutes />} />
+          </Route>
 
-                <Route element={<ProtectedRoute allowedRoles={["MERCHANT"]} />}>
-                    <Route path="/merchant/*" element={<MerchantRoutes />} />
-                </Route>
+          <Route element={<ProtectedRoute allowedRoles={["MERCHANT"]} />}>
+              <Route path="/merchant/*" element={<MerchantRoutes />} />
+          </Route>
 
-                <Route element={<ProtectedRoute allowedRoles={["MEMBER"]} />}>
-                    <Route path="/member/*" element={<MemberRoutes />} />
-                </Route>
+          <Route element={<ProtectedRoute allowedRoles={["MEMBER"]} />}>
+              <Route path="/member/*" element={<MemberRoutes />} />
+          </Route>
 
 
-                <Route element={<ProtectedRoute allowedRoles={["INVESTOR"]} />}>
-                    <Route path="/investor/*" element={<InvestorRoutes />} />
-                </Route>
+          <Route element={<ProtectedRoute allowedRoles={["INVESTOR"]} />}>
+              <Route path="/investor/*" element={<InvestorRoutes />} />
+          </Route>
 
-                <Route element={<ProtectedRoute allowedRoles={["CUSTOMER_SUPPORT"]} />}>
-                    <Route path="/customer-support/*" element={<CustomerSupportRoutes />} />
-                </Route>
+          <Route element={<ProtectedRoute allowedRoles={["HUB"]} />}>
+              <Route path="/hub/*" element={<HubRoutes />} />
+          </Route>
 
+          <Route element={<ProtectedRoute allowedRoles={["CUSTOMER_SUPPORT"]} />}>
+              <Route path="/customer-support/*" element={<CustomerSupportRoutes />} />
+          </Route>
+
+          <Route path="/pay-qr/merchant/:merchant_id" element={< PayQR/>}/>
+                
 
           <Route path="*" element={<ErrorPage />} />
 

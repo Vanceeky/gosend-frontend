@@ -24,11 +24,6 @@ import {
 } from "@/components/ui/pagination";
 
 const rewardsData = [
-  { id: "R001", transactionId: "T123", date: "2025-03-01", points: 50, status: "claimed", conditions: "Valid for 6 months", expiration: "2024-09-01", time: "14:30" },
-  { id: "R002", transactionId: "T124", date: "2025-03-05", points: 30, status: "pending", conditions: "Valid for 3 months", expiration: "2024-06-05", time: "10:15" },
-  { id: "R003", transactionId: "T125", date: "2025-03-10", points: 20, status: "claimed", conditions: "Valid for 1 year", expiration: "2025-03-10", time: "08:45" },
-  { id: "R004", transactionId: "T126", date: "2025-03-15", points: 40, status: "pending", conditions: "No expiration", expiration: "N/A", time: "17:20" },
-  { id: "R005", transactionId: "T127", date: "2025-03-20", points: 10, status: "claimed", conditions: "Valid for 2 years", expiration: "2026-03-20", time: "12:00" },
 ];
 
 const Rewards = () => {
@@ -135,22 +130,7 @@ const Rewards = () => {
           </Table>
         </div>
 
-        {/* Fixed Pagination at the Bottom */}
-        <div className="w-full flex justify-center mt-4">
-          <Pagination className="flex justify-center">
-            <PaginationContent>
-              <PaginationPrevious onClick={() => setPage(page - 1)} disabled={page === 1} />
-              {[...Array(totalPages)].map((_, i) => (
-                <PaginationItem key={i}>
-                  <PaginationLink onClick={() => setPage(i + 1)} isActive={page === i + 1}>
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationNext onClick={() => setPage(page + 1)} disabled={page === totalPages} />
-            </PaginationContent>
-          </Pagination>
-        </div>
+
 
         {/* Dialog Modal */}
         <Dialog open={!!selectedReward} onOpenChange={() => setSelectedReward(null)}>

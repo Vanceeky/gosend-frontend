@@ -189,9 +189,12 @@ const handleMpinSubmit = async (e) => {
         navigate("/member");
       } else if (data.account_type === "LEADER") {
         navigate("/community");
+      } else if (data.account_type === "HUB") {
+        navigate("/hub");
       } else if (data.account_type === "MERCHANT") {
         navigate("/merchant", {replace: true});
       }
+
     }, 100);
 
   } catch (err) {
@@ -415,6 +418,8 @@ const handleMpinSubmit = async (e) => {
                 <SelectItem value="MEMBER">Member</SelectItem>
                 <SelectItem value="MERCHANT">Merchant</SelectItem>
                 <SelectItem value="LEADER">Community Leader</SelectItem>
+              
+                <SelectItem value="HUB">HUB</SelectItem>
               </SelectContent>
             </Select>
 

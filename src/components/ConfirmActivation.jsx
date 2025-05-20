@@ -127,7 +127,7 @@ export default function ConfirmActivation({ user, onActivateSuccess  }) {
           <>
             <DialogDescription>Enter the OTP to complete activation.</DialogDescription>
             <div className="space-y-2">
-              <Input type="text" value={memberId} readOnly className="cursor-pointer" />
+              <Input type="hidden" value={memberId} readOnly className="cursor-pointer" />
               <Label>Reference ID</Label>
               <Input type="text" value={referenceId} readOnly className="cursor-pointer" />
               <Label>OTP</Label>

@@ -21,6 +21,8 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-menubar": "^1.1.6",
     "@radix-ui/react-popover": "^1.1.6",
+    "@radix-ui/react-radio-group": "^1.2.3",
+    "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
@@ -37,9 +39,11 @@
     "framer-motion": "^12.4.10",
     "input-otp": "^1.4.2",
     "js-cookie": "^3.0.5",
+    "js-sha256": "^0.11.0",
     "lucide-react": "^0.475.0",
     "mapbox-gl": "^3.10.0",
     "next-themes": "^0.4.4",
+    "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
     "react-date-range": "^2.0.1",
     "react-day-picker": "^8.10.1",
@@ -50,6 +54,7 @@
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {

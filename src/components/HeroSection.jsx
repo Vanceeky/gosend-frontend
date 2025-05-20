@@ -1,92 +1,150 @@
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import bg from '@/assets/image/image2.1.png';
-import bg1 from '@/assets/image/applelogo.png';
-import bg2 from '@/assets/image/google.png';
+import hero1 from "@/assets/ub-03-hero.avif";
+import hero2 from "@/assets/ub-04-hero.avif";
+import hero3 from "@/assets/ub-hero-02.avif";
+import { useState, useEffect } from "react";
 
 export function HeroSection() {
-  // Animation variants
-  const textVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const slides = [
+    {
+      image: hero1,
+      title: "Fast and Secure Payments",
+      description: "Seamlessly send and receive payments with GoSend, your all-in-one e-wallet solution.",
+      buttonText: "Get Started",
+      buttonLink: "#"
+    },
+    {
+      image: hero2,
+      title: "Experience the Future of Digital Transactions",
+      description: "Make secure payments with just a few clicks, anytime and anywhere with GoSend.",
+      buttonText: "Explore Now",
+      buttonLink: "#explore"
+    },
+    {
+      image: hero3,
+      title: "Join the GoSend Revolution",
+      description: "Be a part of the next-generation digital wallet with innovative features and instant transactions.",
+      buttonText: "Learn More",
+      buttonLink: "#learn-more"
+    }
+  ];
+
+  const goToSlide = (index) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentSlide(index);
+    setTimeout(() => setIsAnimating(false), 1000); // Match this with your animation duration
   };
 
-  const buttonVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.8, delay: 0.5 } },
+  const goToNextSlide = () => {
+    goToSlide((currentSlide + 1) % slides.length);
   };
+
+  const goToPreviousSlide = () => {
+    goToSlide((currentSlide - 1 + slides.length) % slides.length);
+  };
+
+  // Auto-slide functionality
+  useEffect(() => {
+    const interval = setInterval(goToNextSlide, 3000);
+    return () => clearInterval(interval);
+  }, [currentSlide]);
 
   return (
-    <section className="bg-gradient-to-r from-blue-50 to-purple-50 py-20">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
-          {/* Left Side: Text Content */}
+    <section className="relative w-full h-screen min-h-[600px] overflow-hidden">
+      {/* Background Images with Transition */}
+      {slides.map((slide, index) => (
+        <div 
+          key={index}
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        >
+          <img
+            src={slide.image}
+            alt="Hero Background"
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-black/30"></div>
+        </div>
+      ))}
+
+      {/* Content with Fade Animation */}
+      <div className="relative z-10 h-full flex items-center">
+        <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="text-center md:text-left md:w-1/2">
-            {/* Animated Heading */}
-            <motion.h1
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
-              variants={textVariants}
-              initial="hidden"
-              animate="visible"
+            <h1 
+              className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-md"
+              key={`title-${currentSlide}`}
             >
-              Unlock the Power of Smart E-Wallet Rewards!
-            </motion.h1>
-
-            {/* Animated Subheading */}
-            <motion.p
-              className="text-lg md:text-xl text-gray-600 mb-8"
-              variants={textVariants}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: 0.2 }}
+              {slides[currentSlide].title}
+            </h1>
+            <p 
+              className="text-lg md:text-xl text-gray-100 mb-8 drop-shadow-md"
+              key={`desc-${currentSlide}`}
             >
-              Join <span className="font-semibold text-orange-600"> GoSend </span> and experience seamless digital transactions with built-in affiliate marketing. Activate your account, enjoy exclusive features, and earn rewards.
-            </motion.p>
-
-            {/* Animated Buttons */}
-            <motion.div
-              className="flex justify-center md:justify-start space-x-4"
-              variants={buttonVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-3 sm:space-y-0 sm:space-x-5 p-4 sm:p-0">
-                <Button asChild className="flex items-center px-5 py-3 text-white bg-black rounded-lg hover:bg-gray-800 transition">
-                  <Link to="#" className="flex items-center">
-                    <img
-                      src={bg1} // Replace with your actual image URL
-                      alt="Google Play-Store"
-                      className="w-6 h-6 mr-3" // Adjust width as needed
-                    />
-                    <span className="text-base font-medium">Get it on Google Play</span>
-                  </Link>
-                </Button>
-
-                <Button asChild className="flex items-center px-5 py-3 text-white bg-black rounded-lg hover:bg-gray-800 transition">
-                  <Link to="#" className="flex items-center">
-                  <img
-                      src={bg2} // Replace with your actual image URL
-                      alt="Download Options"
-                      className="w-6 h-6 mr-3" // Adjust width as needed
-                    />
-                    <span className="text-base font-medium">Get it on App Store</span>
-                  </Link>
-                </Button>
-              </div>
-
-            </motion.div>
-          </div>
-
-          {/* Right Side: Image */}
-          <div className="md:w-1/2">
-            <img
-              src={bg} // Replace with your image URL
-              alt="Hero Image"
-            />
+              {slides[currentSlide].description}
+            </p>
+            <div className="flex justify-center md:justify-start space-x-4">
+              <Button
+                asChild
+                className="px-5 py-3 text-white bg-black hover:bg-gray-800 transition"
+              >
+                <Link to={slides[currentSlide].buttonLink}>
+                  <span className="text-base font-medium">{slides[currentSlide].buttonText}</span>
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Carousel Controls */}
+      <div className="absolute top-1/2 left-0 right-0 flex justify-between px-6 transform -translate-y-1/2 z-20">
+        <button
+          onClick={goToPreviousSlide}
+          className="bg-black/50 text-white p-3 rounded-full shadow-lg hover:bg-black/70 transition backdrop-blur-sm"
+          aria-label="Previous slide"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={goToNextSlide}
+          className="bg-black/50 text-white p-3 rounded-full shadow-lg hover:bg-black/70 transition backdrop-blur-sm"
+          aria-label="Next slide"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Slide Indicators */}
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-2 z-20">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white w-6' : 'bg-white/50'}`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Add these animations to your global CSS */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+      `}</style>
     </section>
   );
 }

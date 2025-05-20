@@ -40,9 +40,10 @@ export function LoginForm({ className, ...props }) {
       }
   
       const data = await response.json();
+      console.log("API Response", data)
   
       // Extract nested data
-      const userData = data; // Adjusting for the nested structure
+      const userData = data.data; // Adjusting for the nested structure
   
       if (!userData || !userData.access_token || !userData.account_type) {
         throw new Error("Invalid response from server.");

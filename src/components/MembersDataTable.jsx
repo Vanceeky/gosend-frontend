@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Cookies from "js-cookie";
 
+import GenerateMemberReport from "@/components/GenerateMemberReport";
 
 
 export default function MembersDataTable({ data = [], onActivate }) {
@@ -51,51 +52,56 @@ export default function MembersDataTable({ data = [], onActivate }) {
       <h2 className="text-2xl font-bold mb-4">Members</h2>
 
       {/* Search & Filters */}
-      <div className="flex flex-wrap items-center gap-4">
-        {/* Search Input */}
-        <Input
-          className="w-[250px]"
-          placeholder="Search by Mobile Number"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="flex justify-between flex-wrap items-center gap-4">
+          {/* Search Input */}
+          <div className="flex flex-wrap gap-4">
+          <Input
+            className="w-[250px]"
+            placeholder="Search by Mobile Number"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-        {/* KYC Filter */}
-        <Select
-          value={kycFilter !== null ? String(kycFilter) : "all"}
-          onValueChange={(value) => {
-            const newValue = value === "all" ? null : value === "true";
-            setKycFilter(newValue);
-          }}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="KYC Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">KYC</SelectItem>
-            <SelectItem value="true">Verified</SelectItem>
-            <SelectItem value="false">Not Verified</SelectItem>
-          </SelectContent>
-        </Select>
+          {/* KYC Filter */}
+          <Select
+            value={kycFilter !== null ? String(kycFilter) : "all"}
+            onValueChange={(value) => {
+              const newValue = value === "all" ? null : value === "true";
+              setKycFilter(newValue);
+            }}
+          >
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="KYC Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">KYC</SelectItem>
+              <SelectItem value="true">Verified</SelectItem>
+              <SelectItem value="false">Not Verified</SelectItem>
+            </SelectContent>
+          </Select>
 
-        {/* Activation Filter */}
-        <Select
-          value={activatedFilter !== null ? String(activatedFilter) : "all"}
-          onValueChange={(value) => {
-            const newValue = value === "all" ? null : value === "true";
-            setActivatedFilter(newValue);
-          }}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Activation Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Activation Status</SelectItem>
-            <SelectItem value="true">Activated</SelectItem>
-            <SelectItem value="false">Not Activated</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+          {/* Activation Filter */}
+          <Select
+            value={activatedFilter !== null ? String(activatedFilter) : "all"}
+            onValueChange={(value) => {
+              const newValue = value === "all" ? null : value === "true";
+              setActivatedFilter(newValue);
+            }}
+          >
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Activation Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Activation Status</SelectItem>
+              <SelectItem value="true">Activated</SelectItem>
+              <SelectItem value="false">Not Activated</SelectItem>
+            </SelectContent>
+          </Select>
+          </div>
+
+          <GenerateMemberReport data={filteredData} />
+          
+        </div>
 
       {/* Table Container */}
       {/* Responsive Table */}

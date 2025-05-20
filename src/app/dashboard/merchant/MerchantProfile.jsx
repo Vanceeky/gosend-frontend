@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { QRCodeCanvas } from "qrcode.react";
 
 import {
   Card,
@@ -12,7 +13,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-import { ShieldCheckIcon, MoreVertical, ExternalLink, Wallet, WalletMinimal } from "lucide-react";
+import { ShieldCheckIcon, MoreVertical, ExternalLink, Wallet, WalletMinimal, Clipboard } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -144,15 +145,31 @@ export default function MerchantProfile() {
 
                                 <Separator />
 
+
                                 {/* Merchant QR CODE */}
                                 <Card>
                                   <CardHeader>
                                     <CardTitle>Merchant QR Code</CardTitle>
                                   </CardHeader>
-                                  <CardContent className="flex justify-center">
-                                    <QrCode size={100} className="text-gray-500" />
+                                  <CardContent className="flex justify-center flex-col items-center">
+                                    <QRCodeCanvas
+                                      value={`http://localhost:5173/pay-qr/merchant/${merchant_id}`} // Dynamic merchant URL
+                                      size={150}
+                                    />
+                                    <div className="mt-4 flex items-center space-x-2">
+                                      <span> Copy Merchant Pay QR</span>
+                                      <button
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(`http://localhost:5173/pay-qr/merchant/${merchant_id}`);
+                                        }}
+                                        className="p-2 rounded-md text-dark"
+                                      >
+                                        <Clipboard className="w-5 h-5" />
+                                      </button>
+                                    </div>
                                   </CardContent>
                                 </Card>
+
                               </CardContent>
                             </Card>
                           </TabsContent>

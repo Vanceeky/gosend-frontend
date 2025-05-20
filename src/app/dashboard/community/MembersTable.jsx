@@ -10,6 +10,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ConfirmActivation from '@/components/ConfirmActivation';
 import Cookies  from 'js-cookie';
+
 const MembersTable = ({ members, onActivate }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [kycStatus, setKycStatus] = useState('all');
@@ -17,6 +18,7 @@ const MembersTable = ({ members, onActivate }) => {
   const [membersList, setMembersList] = useState(members);
 
   const accountType = Cookies.get("account_type")
+  console.log(accountType)
 
   const getAvatarFallback = (firstName, lastName) => {
     return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
@@ -122,8 +124,6 @@ const MembersTable = ({ members, onActivate }) => {
                     <TableCell>{member.is_kyc_verified ? "✅ Yes" : "❌ No"}</TableCell>
                     <TableCell>{member.is_activated ? "✅ Yes" : "❌ No"}</TableCell>
                     
-                    {/* Actions Dropdown */}
-                    { (accountType == "ADMIN" || accountType == "LEADER") && (
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -165,7 +165,7 @@ const MembersTable = ({ members, onActivate }) => {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
-                    )}
+            
 
 
 

@@ -1,11 +1,11 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "@/components/ui/pagination";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
-
+import { Input } from "@/components/ui/input";
+import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 
 const RewardsTable = () => {
     const [rewards, setRewards] = useState([]);
@@ -13,6 +13,9 @@ const RewardsTable = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState(null);
+    const [sortOrder, setSortOrder] = useState("asc");
     const itemsPerPage = 5;
   
     useEffect(() => {
@@ -31,7 +34,7 @@ const RewardsTable = () => {
   
           const data = await response.json();
           setTotalRewards(data.total_rewards);
-          setRewards(data.rewards || []); // Ensure it's an array
+          setRewards(data.rewards || []);
         } catch (err) {
           setError(err.message);
         } finally {
@@ -42,8 +45,33 @@ const RewardsTable = () => {
       fetchRewards();
     }, []);
   
-    const totalPages = Math.ceil(rewards.length / itemsPerPage);
-    const paginatedData = rewards.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const toggleSort = (column) => {
+      if (sortBy === column) {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSortBy(column);
+        setSortOrder('asc');
+      }
+    };
+  
+    const getSortIcon = (column) => {
+      if (sortBy !== column) return <ChevronsUpDown className='inline w-4 h-4' />;
+      return sortOrder === 'asc' ? <ChevronUp className='inline w-4 h-4' /> : <ChevronDown className='inline w-4 h-4' />;
+    };
+  
+    const filteredData = rewards.filter(reward =>
+      reward.reward_from_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  
+    const sortedData = [...filteredData].sort((a, b) => {
+      if (!sortBy) return 0;
+      const valA = a[sortBy];
+      const valB = b[sortBy];
+      return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    });
+  
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+    const paginatedData = sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   
     if (loading) return <p>Loading rewards...</p>;
     if (error) return <p className="text-red-500">Error: {error}</p>;
@@ -53,18 +81,31 @@ const RewardsTable = () => {
         return words.length > 1
           ? words[0][0].toUpperCase() + words[1][0].toUpperCase()
           : words[0][0].toUpperCase();
-      };
-
+    };
+  
     return (
       <>
+        <Input
+          type="text"
+          placeholder="Search Reward From..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-4 w-[75w-full sm:w-[200px] md:w-auto lg:w-[350px]]"
+        />
         <Table>
           <TableHeader className="bg-gray-100">
             <TableRow>
               <TableHead>Reward From</TableHead>
-              <TableHead>Reward Source Type</TableHead>
-              <TableHead>Title</TableHead>
+              <TableHead onClick={() => toggleSort('reward_source_type')} className='cursor-pointer'>
+                Reward Source Type {getSortIcon('reward_source_type')}
+              </TableHead>
+              <TableHead onClick={() => toggleSort('title')} className='cursor-pointer'>
+                Title {getSortIcon('title')}
+              </TableHead>
               <TableHead>Points</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead onClick={() => toggleSort('created_at')} className='cursor-pointer'>
+                Date {getSortIcon('created_at')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,7 +120,7 @@ const RewardsTable = () => {
                 <TableRow key={index} className="cursor-pointer">
                   <TableCell className="flex items-center gap-2">
                     <Avatar>
-                    <AvatarFallback>{getInitials(reward.reward_from_name)}</AvatarFallback>
+                      <AvatarFallback>{getInitials(reward.reward_from_name)}</AvatarFallback>
                     </Avatar>
                     {reward.reward_from_name}
                   </TableCell>

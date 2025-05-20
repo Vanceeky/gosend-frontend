@@ -12,7 +12,7 @@ export default function Mapbox({onLocationChange}) {
   const [marker, setMarker] = useState(null); 
   const [markerPosition, setMarkerPosition] = useState(null);
   const [map, setMap] = useState(null); 
-  const [showPinLocation, setShowPinLocation] = useState(true); 
+  const [showPinLocation, setShowPinLocation] = useState(false); 
   const markerRef = useRef(null); // Using ref to track current marker
 
   useEffect(() => {
@@ -125,10 +125,7 @@ export default function Mapbox({onLocationChange}) {
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '2rem', marginBottom: '20px' }}>Merchant Registration</h1>
-      <p style={{ textAlign: 'center', fontSize: '1rem', color: '#6c757d' }}>
-        Click on the map to move the marker to a new location.
-      </p>
+
 
       <div
         ref={mapContainerRef}

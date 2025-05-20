@@ -13,6 +13,11 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
+import PurchaseBarChart from "@/components/PurchaseBarChart"
+import { TodayActivations } from '@/components/recent-sales';
+
+
+
 const Home = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [monthlyData, setMonthlyData] = useState(null);
@@ -97,6 +102,13 @@ useEffect(() => {
     },
   };
 
+  const today = new Date();
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(today);
+  
 
   return (
     <div>
@@ -139,76 +151,102 @@ useEffect(() => {
           
         </div>
 
-    <div className="grid grid-cols-12 gap-4">
-      {/* Activation Breakdown Table (8 Columns) */}
-      <div className="col-span-8 bg-white shadow rounded-lg p-4">
-      <h2 className="text-lg font-semibold mb-3">Activation Breakdown</h2>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border border-gray-300 p-2">Activated By</th>
-                <th className="border border-gray-300 p-2">Amount (₱)</th>
-                <th className="border border-gray-300 p-2">Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dashboardData.activations.map(([role, amount, count], index) => (
-                <tr key={index} className="text-center">
-                  <td className="border border-gray-300 p-2">{role}</td>
-                  <td className="border border-gray-300 p-2">{amount}</td>
-                  <td className="border border-gray-300 p-2">{count}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-      </div>
-
-
-      {/* Activation Reward Distribution Chart (4 Columns) */}
-      <div className="col-span-4">
-        <Card className="flex flex-col">
-          <CardHeader className="items-center pb-0">
-            <CardTitle>Activation Reward Distribution</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 pb-0">
-            <ChartContainer
-              config={chartConfig}
-              className="mx-auto aspect-square max-h-[250px] pb-0 [&_.recharts-pie-label-text]:fill-foreground"
-            >
-              <PieChart>
-                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                <Pie data={chartData} dataKey="amount" nameKey="role" label />
-              </PieChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-      </div>
-      
-    </div>
-
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-7 p-2 ">
-        
-        {/* Overview Card - Takes up full width on small screens */}
-        <Card className="sm:col-span-1 md:col-span-2 lg:col-span-4">
-          <CardHeader className="flex flex-col gap-1">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold">Overview</CardTitle>
-              <span className="text-sm text-gray-500 cursor-pointer">📊 Monthly Summary</span>
+        <div className="grid grid-cols-12 gap-4">
+          {/* Activation Breakdown Table (8 Columns) */}
+            <div className="col-span-4 bg-white shadow rounded-lg p-4">
+                <CardTitle className="mb-2">Activation Breakdown</CardTitle>
+                <table className="w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="border border-gray-300 p-2">Activated By</th>
+                      <th className="border border-gray-300 p-2">Amount</th>
+                      <th className="border border-gray-300 p-2">Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dashboardData.activations.map(([role, amount, count], index) => (
+                      <tr key={index} className="text-center">
+                        <td className="border border-gray-300 p-2">{role}</td>
+                        <td className="border border-gray-300 p-2">₱ {amount}</td>
+                        <td className="border border-gray-300 p-2">{count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
             </div>
-            <p className="text-sm text-muted-foreground">
-              This chart displays the total activation earnings for each month, 
-              helping track trends in user activations over time.
+
+
+            {/* Activation Reward Distribution Chart (4 Columns) */}
+            <div className="col-span-4">
+              <Card className="flex flex-col">
+                <CardHeader className="pb-0">
+                  <CardTitle className="mb-2">Activation Reward Distribution</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1 pb-0">
+                  <ChartContainer
+                    config={chartConfig}
+                    className="mx-auto aspect-square max-h-[250px] pb-0 [&_.recharts-pie-label-text]:fill-foreground"
+                  >
+                    <PieChart>
+                      <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                      <Pie data={chartData} dataKey="amount" nameKey="role" label />
+                    </PieChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="col-span-4 bg-white shadow rounded-lg p-4">
+            <CardTitle className="mb-2">Merchant Purchase Reward Distribution</CardTitle>
+                
+            </div>
+          
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-7 ">
+          
+          {/* Overview Card - Takes up full width on small screens */}
+          <Card className="sm:col-span-1 md:col-span-2 lg:col-span-3">
+            <CardHeader className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">Today's Activation History</CardTitle>
+                <span className="text-sm text-gray-500 cursor-pointer">{formattedDate}</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+              Here you can see the activation history for today. Track the latest activation activities, including amounts and user details.
             </p>
-          </CardHeader>
+            </CardHeader>
 
-          <CardContent className="pl-2">
-          <Overview monthlyData={monthlyData} />
+            <CardContent className="pl-2">
+            
+              <TodayActivations activations={dashboardData.today_activations}/>
 
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          {/* Overview Card - Takes up full width on small screens */}
+          <Card className="sm:col-span-1 md:col-span-2 lg:col-span-4">
+            <CardHeader className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">Overview</CardTitle>
+                <span className="text-sm text-gray-500 cursor-pointer">📊 Monthly Summary</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                This chart displays the total activation earnings for each month, 
+                helping track trends in user activations over time.
+              </p>
+            </CardHeader>
+
+            <CardContent className="pl-2">
+            <Overview monthlyData={monthlyData} />
+
+            </CardContent>
+          </Card>
 
 
-      </div>
+
+
+        </div>
 
       </div>
     </div>

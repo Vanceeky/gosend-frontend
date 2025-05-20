@@ -44,6 +44,11 @@ const menuConfig = {
       {
         title: "Home",
         url: "/member",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Profile",
+        url: "/member/dashboard",
         icon: Home,
       },
 
@@ -127,6 +132,11 @@ const menuConfig = {
         title: "Community",
         url: "/investor/community",
         icon: Globe,
+      },
+      {
+        title: "Activation History",
+        url: "/investor/activation-history",
+        icon: BadgeCheck
       },
       {
         title: "Rewards",
@@ -238,6 +248,27 @@ const menuConfig = {
         title: "Rewards",
         url: "/customer-support/rewards",
         icon: UserRoundPenIcon,
+      },
+    ],
+    navSecondary: [],
+    projects: [],
+  },
+  HUB: {
+    navMain: [
+      {
+        title: "Home",
+        url: "/hub",
+        icon: Home,
+      },
+      {
+        title: "Merchants",
+        url: "/hub/transactions",
+        icon: Store,
+      },
+      {
+        title: "Rewards",
+        url: "/hub/rewards",
+        icon: Send,
       },
     ],
     navSecondary: [],
